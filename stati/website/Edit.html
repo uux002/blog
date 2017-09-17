@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8" />
+        <title>Simple example - Editor.md examples</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="../css/editormd.css" />
+        <link rel="stylesheet" href="../css/uikit.min.css" />
+        <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+        <script src="../js/vue.min.js"></script>
+    </head>
+    <body>
+
+        <div id="view-field">
+            <div v-html="viewhtml"></div>
+        </div>
+
+        <div id="layout">
+            <header>
+                <h1 id="hello">心情这么好，写点什么呢？</h1>
+            </header>
+
+            <div uk-margin style="margin-left:5%" id="article-form">
+            <!--
+                <button class="uk-button uk-button-default">Default</button>
+                <button class="uk-button uk-button-primary">Primary</button>
+                <button class="uk-button uk-button-secondary">Secondary</button>
+                <button class="uk-button uk-button-danger">Danger</button>
+                <button class="uk-button uk-button-text">Text</button>
+                <button class="uk-button uk-button-link">Link</button>
+            -->
+                <input v-mode="article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
+                    
+                <select class="uk-select" id="form-horizontal-select" style="width:200px;">
+                    <option>选择分类</option>
+                    <option>分类1</option>
+                    <option>分类2</option>
+                    <option>分类3</option>
+                    <option>计算机图形学</option>
+                </select>
+
+                <button v-on:click="tmpsave" class="uk-button uk-button-danger" id="to-save-tmp" style="width:120px;">存草稿</button>
+                <button v-on:click="public" class="uk-button uk-button-primary" id="to-public" style="width:120px;">发布</button>
+                <button v-on:click="totest" class="uk-button uk-button-primary" id="to-test" style="width:120px;">Test</button>
+            </div>
+
+            </br>
+
+            <div class="editormd" id="test-editormd">
+                <textarea></textarea>
+            </div>
+        </div>
+        
+        <script src="js/zepto.min.js"></script>
+        <script src="../editormd.min.js"></script>
+        <script src="../js/uikit.min.js"></script>
+        <script src="../js/uikit-icons.min.js"></script>
+        <script src="../js/sha1.min.js"></script>
+        <script src="../js/sticky.min.js"></script>
+        
+        <script type="text/javascript">
+            var app = new Vue({
+                    el:'#view-field',
+                    data:{
+                        viewhtml:"",
+                    },
+                    methods:{
+                        totest: function(data){
+                            this.viewhtml = data;
+                        }
+                    }
+                })
+
+            
+            
+            
+            var testEditor;
+            var jQuery = Zepto;  // 为了避免修改 flowChart.js 和 sequence-diagram.js 的源码，所以想支持 flowChart / sequenceDiagram 就得加上这一句
+            
+
+             window.onload = function() {
+                testEditor = editormd("test-editormd", {
+                width: "90%",
+                height: 740,
+                path : '../lib/',
+                theme : "default",
+                previewTheme : "default",
+                editorTheme : "base16-light",
+                codeFold : true,
+                //syncScrolling : false,
+                saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+                searchReplace : true,
+                //watch : false,                // 关闭实时预览
+                htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启    
+                //toolbar  : false,             //关闭工具栏
+                //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
+                emoji : true,
+                taskList : true,
+                tocm            : true,         // Using [TOCM]
+                tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                flowChart : true,             // 开启流程图支持，默认关闭
+                sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
+                //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+                //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
+                //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+                //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+                imageUpload : true,
+                imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL : "./php/upload.php",
+                onload : function() {
+                    console.log('onload', this);
+                        
+                    //this.fullscreen();
+                    //this.unwatch();
+                    //this.watch().fullscreen();
+                    //this.setMarkdown("#PHP");
+                    //this.width("100%");
+                    //this.height(480);
+                    //this.resize("100%", 640);
+                    }
+                });
+
+
+                $("#to-save-tmp").bind('click',function(){
+                    var html = testEditor.getHTML();
+                    alert(html);
+                });
+
+                $("#to-public").bind('click',function(){
+                    var html = testEditor.getHTML();
+                    alert(html);
+                });
+
+                $("#to-test").bind('click',function(){
+                    var html = testEditor.getHTML();
+                    app.totest(html);
+                    
+                });
+            };
+            
+        </script>
+    </body>
+</html>
