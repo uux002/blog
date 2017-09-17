@@ -1,0 +1,139 @@
+/*---------- contents.html ----------*/
+#contents{
+    width:100%;
+    height:100%;
+    margin-left:3px;
+    border-top:2px solid #dddddd;
+    margin-top:-3px;
+}
+
+
+/*---------- right_side.html ----------*/
+
+#right-side{
+    /*border:1px solid red;*/
+    height:100%;
+    width:300px;
+    margin-left:8px;
+    margin-top:-3px;
+}
+
+#right-side-search-field{
+    border:1px solid #808080;
+}
+
+#right-side-search-field form{
+    width:100%;
+}
+
+#right-side-search-field input{
+    font-size:12px;
+}
+
+
+#right-side-login-field{
+    border:1px solid #808080;
+    height:90px;
+    margin-top:12px;
+}
+
+.right-side-login-input{
+    /*border:1px solid #808080;*/
+    margin-top:5px;
+    width:141px;
+    margin-left:4px;
+    padding:0px;
+}
+
+.right-side-login-input input{
+    font-size:12px;
+}
+
+#right-side-login-remember{
+    padding:0;
+    padding-left:5px;
+    font-size:10px;
+    margin-top:20px;
+}
+
+#right-side-login-remember a{
+    margin-left:15px;
+}
+
+#right-side-login-remember button{
+    margin-left:102px;
+    font-size:10px;
+}
+
+.right-side-money{
+    border:1px solid #808080;
+    padding:0;
+    margin:0;
+    height:300px;
+    width:100%;
+    margin-top:12px;
+}
+
+
+#right-side-public {
+    margin-top:12px;
+    margin-bottom: 22px; 
+}
+
+#right-side-public button{
+    margin-top:12px;
+}
+
+
+
+
+/* ------------ 登录注册页 ------------- */
+#signinsignup{
+    /*border:1px solid red;*/
+    padding-top:50px;
+}
+
+
+#signup-field{
+    /*border:1px solid blue;*/
+    width:318px;
+    padding:0px;
+    margin-left:70px;
+}
+
+#signin-field{
+    /*border:1px solid green;*/
+    width:318px;
+    padding:0px;
+    margin-left:60px;
+}
+
+#signinup-middle-line{
+    border-right:1px solid gray;
+    padding:0px;
+    height:250px;
+    
+}
+
+.signinsignup-input{
+    width:255px;
+    margin-top:10px;
+}
+
+#signup-button{
+    margin-top:20px;
+    margin-left:195px;
+}
+
+.signinsignup-title{
+    font-size:14px;
+    color:#336699;
+    font-weight: bold;
+}
+
+#signinsignup-bottom-info{
+    /*border:1px solid red;*/
+    margin-left:30px;
+    margin-top:50px;
+    font-size:13px;
+}

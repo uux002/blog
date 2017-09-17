@@ -1,0 +1,115 @@
+#header{
+    height:75px;
+}
+
+#stay-bar-field{
+    height:18px;
+    background-color: #F0F0F0;
+    border-bottom:1px solid #808080;
+    padding-left:10px;
+}
+
+#stay-bar-content{
+    font-size:10px;
+}
+
+#navbar-field{
+    padding:0px;
+    padding-left:30px;
+    height:45px;
+    border-bottom:1px solid #5F99CF;
+   background-color: #CEE3F8;
+}
+
+
+#logo-img{
+    width:40px;
+    height:40px;
+    margin-top:2px;
+}
+
+#logo-title{
+    margin-top:15px;
+    padding-left:5px;
+    font-size:18px;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: red;
+}
+
+
+#navbar-main{
+    margin-top:27px;
+    margin-left:50px;
+}
+
+#navbar-sub{
+    margin-top:27px;
+    padding-left:60px;
+}
+
+.navbar-main-item{
+    padding:0px;
+    margin-right:8px;
+    font-size:13px;
+    font-weight: bold;
+}
+
+
+.navbar-main-item a{
+    color: #336699;
+    background-color: #eff7ff;
+    padding:1px 7px 1px 7px;
+    text-decoration: none;
+}
+
+
+.navbar-sub-item{
+    font-size:12px;
+    margin-right:8px;
+    padding:0px;
+}
+
+.navbar-sub-item a{
+    color: #336699;
+    text-decoration: none;
+}
+
+
+.hot{
+    color:red !important;
+}
+
+/* 主导航菜单项选中状态 */
+.navbar-main-item-selected{
+   border-left:1px solid #5F99CF;
+   border-top:1px solid #5F99CF;
+   border-right:1px solid #5F99CF;
+   color: red !important;
+   background-color: white !important;
+}
+
+.navbar-sub-item-selected{
+    color:red !important;
+}
+
+
+/* 登录前后的信息 */
+#navbar-right{
+    padding-top:28px;
+    padding-right:20px;
+    font-size:12px;
+}
+
+#navbar-right a{
+    color: #336699;
+}
+
+#navbar-user-login{
+    padding-left:0px;
+    margin-right:10px;
+}
+
+#navbar-user-signup{
+    padding-left:0px;
+}
