@@ -27,7 +27,7 @@ create table users(
 
 ) engine=innodb default charset=utf8;
 
-create table category{
+create table category(
 	`id` varchar(50) not null,
 	`category_id` tinyint not null,
 	`scope` tinyint not null,		# 分类作用域， 0 private, 1 public
@@ -35,9 +35,9 @@ create table category{
 	`created_at` real not null,
 	key `idx_category_id` (`category_id`),
 	primary key(`id`)
-}engine=innodb default charset=utf8;
+)engine=innodb default charset=utf8;
 
-create table article{
+create table article(
 	`id` varchar(50) not null,
 	`author` varchar(50) not null,
 	`belong_category` tinyint not null,
@@ -49,5 +49,5 @@ create table article{
 	key `idx_created_at` (`created_at`),
 	key `idx_belong_category` (`belong_category`),
 	primary key(`id`)
-}engine=innodb default charset=utf8;
+)engine=innodb default charset=utf8;
 
