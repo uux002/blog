@@ -1,6 +1,9 @@
-create database db_zhenxinhuadamaoxian_01;
+#create database db_zhenxinhuadamaoxian_01;
+# mysql -u root -p < init_project.sql
 
-use db_zhenxinhuadamaoxian_01;
+create database db_fredshao_blog;
+
+use db_fredshao_blog;
 
 create table accounts(
 	`id` varchar(50) not null,
@@ -24,32 +27,27 @@ create table users(
 
 ) engine=innodb default charset=utf8;
 
-create table truthordares(
+create table category{
 	`id` varchar(50) not null,
-	`user_id` varchar(50) not null,
-	`title` varchar(600) not null,
-	`content` mediumtext,
-	`item_type` integer not null,
-	`agree_count` integer not null,
-	`message_count` integer not null,
+	`category_id` tinyint not null,
+	`scope` tinyint not null,		# 分类作用域， 0 private, 1 public
+	`title` varchar(50) not null,	# 分类名
 	`created_at` real not null,
-	key `idx_created_at` (`created_at`),
-	key `idx_agree_count` (`agree_count`),
-	key `idx_message_count` (`message_count`),
-	primary key (`id`)
+	key `idx_category_id` (`category_id`),
+	primary key(`id`)
+}engine=innodb default charset=utf8;
 
-) engine=innodb default charset=utf8;
-
-create table comments(
+create table article{
 	`id` varchar(50) not null,
-	`belong_id` varchar(50) not null,
-	`parent_id` varchar(50) not null,
-	`user_id` varchar(50) not null,
-	`content` mediumtext not null,
+	`author` varchar(50) not null,
+	`belong_category` tinyint not null,
+	`article_title` varchar(100) not null,
+	`article_content` MEDIUMTEXT,
+	`last_update` real not null,
 	`created_at` real not null,
+	key `idx_last_update` (`last_update`),
 	key `idx_created_at` (`created_at`),
-	key `idx_belong_id` (`belong_id`),
-	key `idx_parent_id` (`parent_id`),
-	key `idx_user_id` (`user_id`),
-	primary key (`id`)
-) engine=innodb default charset=utf8;
+	key `idx_belong_category` (`belong_category`),
+	primary key(`id`)
+}engine=innodb default charset=utf8;
+
