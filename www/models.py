@@ -6,7 +6,7 @@ Models for user, blog, comment.
 
 import time, uuid
 
-from orm import Model, StringField, BooleanField, FloatField, TextField, IntegerField
+from orm import Model, StringField, BooleanField, FloatField, TextField, IntegerField, TinyIntField, MediumTextField
 
 def next_id():
     return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
@@ -14,7 +14,7 @@ def next_id():
 class Account(Model):
     __table__ = 'accounts'
 
-    id = StringField(primary_key=True,default=next_id,ddl='varchar(50)')
+    id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
     email = StringField(ddl='varchar(50)')
     passwd = StringField(ddl='varchar(50)')
     admin = BooleanField()
@@ -29,25 +29,22 @@ class User(Model):
     image = StringField(ddl='varchar(500)')
     created_at = FloatField(default=time.time)
 
-class TruthOrDare(Model):
-    __table__ = 'truthordares'
 
-    id = StringField(primary_key=True,default=next_id,ddl='varchar(50)')
-    user_id = StringField(ddl='varchar(50)')
-    title = StringField(ddl='varchar(600)')
-    content = TextField()
-    item_type = IntegerField()
-    agree_count = IntegerField()
-    message_count = IntegerField()
+class Category(Model):
+    __table__='category'
+    id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
+    category_id = TinyIntField()
+    scope = TinyIntField()
+    title = StringField(ddl='varchar(50)')
     created_at = FloatField(default=time.time)
 
 
-class Comment(Model):
-    __table__ = 'comments'
-
+class Article(Model):
+    __table__='article'
     id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
-    belong_id = StringField(ddl='varchar(50)')
-    parent_id = StringField(ddl='varchar(50)')
-    user_id = StringField(ddl='varchar(50)')
-    content = TextField()
+    author = StringField(ddl='varchar(50)')
+    belong_category = TinyIntField()
+    article_title = StringField(ddl='varchar(100)')
+    article_content = MediumTextField()
+    last_update = FloatField(default=time.time)
     created_at = FloatField(default=time.time)

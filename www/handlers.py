@@ -14,7 +14,7 @@ from aiohttp import web
 from coroweb import get, post
 from apis import Page, APIValueError, APIResourceNotFoundError
 
-from models import Account, User, TruthOrDare, Comment, next_id
+from models import Account, User, Category, Article, next_id
 from config import configs
 
 COOKIE_NAME = 'zhenxinhuadamaoxian_01'

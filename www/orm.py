@@ -93,6 +93,12 @@ class IntegerField(Field):
     def __init__(self, name=None, primary_key=False, default=0):
         super().__init__(name, 'bigint', primary_key, default)
 
+
+class TinyIntField(Field):
+    def __init__(self,name=None,primary_key=False, default=0):
+        super().__init__(name,'tinyint',primary_key,default)
+
+
 class FloatField(Field):
 
     def __init__(self, name=None, primary_key=False, default=0.0):
@@ -102,6 +108,10 @@ class TextField(Field):
 
     def __init__(self, name=None, default=None):
         super().__init__(name, 'text', False, default)
+
+class MediumTextField(Field):
+    def __init__(self,name=None, default=None):
+        super().__init__(name,'mediumtext',False,default)
 
 class ModelMetaclass(type):
 
