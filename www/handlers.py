@@ -127,7 +127,7 @@ def index(*, page='1'):
 def index(request):
     return {
         #'__template__':'index.html',
-        '__template__':'Edit.html',
+        '__template__':'edit.html',
     }
 
 @get('/signinsignup')

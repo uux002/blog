@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8" />
+        <title>Simple Blog</title>
+        <!-- <link rel="stylesheet" href="static/website/css/style.css" /> -->
+        <!-- <link rel="stylesheet" href="static/css/editormd.css" /> -->
+        <!-- <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" /> -->
+        <!--
+        <link rel="stylesheet" href="static/css/uikit.min.css" />
+        <link rel="stylesheet" href="static/css/blog/index.css"/>
+        <script src="static/js/vue.min.js"></script>
+        <script src="static/js/uikit.min.js"></script>
+        <script src="static/js/uikit-icons.min.js"></script>
+        <script src="static/website/js/jquery.min.js"></script>
+        <script src="static/js/sha1.min.js"></script>
+        <script src="static/js/sticky.min.js"></script>
+        -->
+
+        <link rel="stylesheet" href="../static/css/uikit.min.css" />
+        <link rel="stylesheet" href="../static/css/blog/index.css"/>
+        <script src="../static/js/vue.min.js"></script>
+        <script src="../static/js/uikit.min.js"></script>
+        <script src="../static/js/uikit-icons.min.js"></script>
+        <script src="../static/website/js/jquery.min.js"></script>
+        <script src="../static/js/sha1.min.js"></script>
+        <script src="../static/js/sticky.min.js"></script>
+    </head>
+
+    <body>
+
+        <div class="uk-container" id="index-container">
+            <h3>Simple Travel</h3>
+            <!-- Navbar -->
+            <div id="nav-header">
+                <div class="nav-header-items">
+                    <span name="nav-blog"><a href="#">Blog</a></span>
+                    <span>/</span>
+                    <span name="nav-about"><a href="#">About</a></span>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div id="content-field" style="border:1px solid yellow">
+                <div class="uk-flex">
+                    <!-- left side -->
+                    <div id="info-side">
+                        Width:300 left side
+                    </div>
+                    <!-- right content side -->
+                    <div class="uk-width-expand" id="content-side">
+                        <div class="article-item">
+                            <div class="article-title">
+                                这是一篇文章的标题
+                            </div>
+                            <div class="article-info">
+                                <span>Author: Fredshao</span>
+                                <span>最后更新: 2017-09-19</span>
+                                <span>所属分类</span>
+                            </div>
+                            <div class="article-read-info">
+                                <span>阅读人数:588</span>
+                                <span>喜欢</span>
+                                <span>分享</span>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+        $(function(){
+            select_blog();
+
+            $(".nav-header-items span[name='nav-blog']").click(select_blog);
+            $(".nav-header-items span[name='nav-about']").click(select_about);
+
+        });
+
+        function unselect_all(){
+            $(".nav-header-items span").removeClass("nav-item-selected");
+        }
+
+        function select_blog(){
+            unselect_all();
+            $(".nav-header-items span[name='nav-blog']").addClass("nav-item-selected");
+        }
+
+        function select_about(){
+            unselect_all();
+            $(".nav-header-items span[name='nav-about']").addClass("nav-item-selected");
+        }
+
+        </script>
+            
+    </body>
+</html>
