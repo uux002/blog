@@ -110,25 +110,6 @@ def cookie2account(cookie_str):
         logging.exception(e)
         return None
 
-'''old
-@get('/')
-def index(*, page='1'):
-    page_index = get_page_index(page)
-    num = yield from Blog.findNumber('count(id)')
-    page = Page(num)
-    if num == 0:
-        blogs = []
-    else:
-        blogs = yield from Blog.findAll(orderBy='created_at desc', limit=(page.offset, page.limit))
-    return {
-        '__template__': 'blogs.html',
-        'page': page,
-        'blogs': blogs
-    }
-'''
-
-
-
 
 @get('/')
 def index(request):
@@ -143,15 +124,30 @@ def signin_or_signup():
         '__template__':'signinsignup.html'
     }
 
+
+@get('/edit/{id}')
+def edit_article(id):
+    article = yield from Article.find(id)
+
+
+@get('/new')
+def new_article():
+    pass
+
+@get('/error')
+def get_error():
+    return{
+        '__template__':'404.html'
+    }
+
+
 @get('/resetpassword')
 def reset_password():
     return{
         '__template__':'reset_password.html'
     }
 
-@get('/to_public_zhenxinhua')
-def to_public_zhenxinhua():
-    pass
+
 
 '''
 @get('/blog/{id}')

@@ -21,11 +21,13 @@
                 <h1>Title</h1>
             </header>
 
+
+
+            <!-- 分类编辑面板 -->
             <div class="uk-container" id="add-category-layer">
-                
                 <div class="category-edit-panel">
                     <div uk-margin>
-                        <select class="uk-select" id="category-edit-select" style="width:68%;">
+                        <select class="uk-select" id="category-edit-select" style="width:67%;">
                             <option>选择分类</option>
                             <option>分类1</option>
                             <option>分类2</option>
@@ -36,29 +38,21 @@
                     </div>
 
                     <div uk-margin style="margin-top:10px;">
-                        <input v-mode="new-category-name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:68%">
+                        <input v-mode="new-category-name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:67%">
                         <button v-on:click="add_category" class="uk-button uk-button-primary" id="category-edit-add" style="width:30%">添加分类</button>
                     </div>
 
-                    <div uk-margin style="margin-top:30px">
+                    <div uk-margin style="margin-top:80px">
                         <button v-on:click="clost-category-edit" class="uk-button uk-button-default" id="category-panel-close" style="width:30%; margin-left:35%">关闭</button>
                     </div>
                 </div>
-                
-                
             </div>
+            <!-- 分类编辑面板结束 -->
 
+
+            <!-- 文章头部标题，分类，操作等 -->
             <div uk-margin style="margin-left:5%" id="article-form">
-            <!--
-                <button class="uk-button uk-button-default">Default</button>
-                <button class="uk-button uk-button-primary">Primary</button>
-                <button class="uk-button uk-button-secondary">Secondary</button>
-                <button class="uk-button uk-button-danger">Danger</button>
-                <button class="uk-button uk-button-text">Text</button>
-                <button class="uk-button uk-button-link">Link</button>
-            -->
                 <input v-mode="article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
-                    
                 <select class="uk-select" id="form-horizontal-select" style="width:200px;">
                     <option>选择分类</option>
                     <option>分类1</option>
@@ -77,12 +71,15 @@
                 <button v-on:click="public" class="uk-button uk-button-primary" id="to-public" style="width:120px;">发布</button>
                 <button v-on:click="totest" class="uk-button uk-button-primary" id="to-test" style="width:120px;">编辑分类</button>
             </div>
-
+            <!-- 文章头部信息结束 -->
+            
             </br>
 
+            <!-- 正文编辑 -->
             <div class="editormd" id="test-editormd">
                 <textarea></textarea>
             </div>
+
         </div>
         
         <script src="static/website/js/zepto.min.js"></script>

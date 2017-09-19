@@ -1,6 +1,6 @@
 #add-category-layer{
     position: absolute;
-    border:2px solid blue;
+    /*border:2px solid blue;*/
     z-index:60002;
     /*background-color:gray;*/
     top:0%;
@@ -12,9 +12,14 @@
 }
 
 .category-edit-panel{
-    border:1px solid red;
+    padding-top:50px;
+    padding-left:10px;
+    border:2px solid gray;
     margin-top:300px;
     margin-left:30%;
     margin-right:30%;
     width:40%;
+    height:300px;
+    /*background-color: gray;*/
+    background-color:white;
 }
