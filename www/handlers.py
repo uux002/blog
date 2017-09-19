@@ -17,6 +17,10 @@ from apis import Page, APIValueError, APIResourceNotFoundError
 from models import Account, User, Category, Article, next_id
 from config import configs
 
+import os
+
+from datetime import datetime
+
 COOKIE_NAME = 'zhenxinhuadamaoxian_01'
 _COOKIE_KEY = configs.session.secret
 
@@ -123,6 +127,9 @@ def index(*, page='1'):
     }
 '''
 
+
+
+
 @get('/')
 def index(request):
     return {
@@ -218,6 +225,43 @@ async def authenticate(*, email, passwd):
     r.body = json.dumps(account, ensure_ascii=False).encode('utf-8')
     logging.info("============> 登录成功")
     return r
+
+
+@post('/api/imgupload')
+async def img_upload(request):
+    reader = await request.multipart()
+    img = await reader.next()
+
+    filename = img.filename
+    raw_filename,ext = os.path.splitext(filename)
+    save_filename = str(int(datetime.now().timestamp())) + ext
+    upload_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/blog_images/' + save_filename)
+    download_path = configs.domain + save_filename
+
+    logging.info("Path:" + upload_path)
+    size = 0
+    #path = "D:/ImgUpload/" + filename
+    with open(upload_path,'wb') as f:
+        while True:
+            chunk = await img.read_chunk()
+            if not chunk:
+                break
+            size += len(chunk)
+            f.write(chunk)
+    
+    return{
+        'success':1,
+        'message':'Upload OK',
+        'url':download_path
+    }
+
+@post('/api/add_category')
+async def add_category(*, category):
+    pass
+
+@get('/api/get_all_category')
+async def get_all_category():
+    pass
 
 
 @get('/signout')

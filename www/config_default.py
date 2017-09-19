@@ -14,11 +14,13 @@ configs = {
         'port': 3306,
         'user': 'root',
         'password': 'jkilopqcv0968',
-        'db': 'db_zhenxinhuadamaoxian_01'
+        'db': 'db_fredshao_blog'
     },
     'session': {
-        'secret': 'ZhenXinHuaDaMaoXian_01'
-    }
+        'secret': 'FredShao_Blog'
+    },
+    #'domain':'http://fredshao.cc/static/blog_images/',
+    'domain':'http://127.0.0.1:9000/static/blog_images/',
 }
 
 

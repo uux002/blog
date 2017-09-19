@@ -6,19 +6,47 @@
         <link rel="stylesheet" href="static/website/css/style.css" />
         <link rel="stylesheet" href="static/css/editormd.css" />
         <link rel="stylesheet" href="static/css/uikit.min.css" />
+        <link rel="stylesheet" href="static/css/blog/edit.css"/>
         <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
         <script src="static/js/vue.min.js"></script>
     </head>
     <body>
-
         <div id="view-field">
             <div v-html="viewhtml"></div>
         </div>
 
         <div id="layout">
             <header>
-                <h1 id="hello">心情这么好，写点什么呢？</h1>
+                <!--<h1 id="hello">心情这么好，写点什么呢？</h1> -->
+                <h1>Title</h1>
             </header>
+
+            <div class="uk-container" id="add-category-layer">
+                
+                <div class="category-edit-panel">
+                    <div uk-margin>
+                        <select class="uk-select" id="category-edit-select" style="width:68%;">
+                            <option>选择分类</option>
+                            <option>分类1</option>
+                            <option>分类2</option>
+                            <option>分类3</option>
+                             <option>计算机图形学</option>
+                        </select>
+                        <button v-on:click="delete_category" class="uk-button uk-button-danger" id="category-edit-del" style="width:30%">删除分类</button>
+                    </div>
+
+                    <div uk-margin style="margin-top:10px;">
+                        <input v-mode="new-category-name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:68%">
+                        <button v-on:click="add_category" class="uk-button uk-button-primary" id="category-edit-add" style="width:30%">添加分类</button>
+                    </div>
+
+                    <div uk-margin style="margin-top:30px">
+                        <button v-on:click="clost-category-edit" class="uk-button uk-button-default" id="category-panel-close" style="width:30%; margin-left:35%">关闭</button>
+                    </div>
+                </div>
+                
+                
+            </div>
 
             <div uk-margin style="margin-left:5%" id="article-form">
             <!--
@@ -39,9 +67,15 @@
                     <option>计算机图形学</option>
                 </select>
 
+                <select class="uk-select" id="form-horizontal-select" style="width:100px;">
+                    <option>公开</option>
+                    <option>私有</option>
+                </select>
+                
+
                 <button v-on:click="tmpsave" class="uk-button uk-button-danger" id="to-save-tmp" style="width:120px;">存草稿</button>
                 <button v-on:click="public" class="uk-button uk-button-primary" id="to-public" style="width:120px;">发布</button>
-                <button v-on:click="totest" class="uk-button uk-button-primary" id="to-test" style="width:120px;">Test</button>
+                <button v-on:click="totest" class="uk-button uk-button-primary" id="to-test" style="width:120px;">编辑分类</button>
             </div>
 
             </br>
@@ -107,7 +141,7 @@
                 //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
                 imageUpload : true,
                 imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-                imageUploadURL : "./php/upload.php",
+                imageUploadURL : "http://127.0.0.1:9000/api/imgupload",
                 onload : function() {
                     console.log('onload', this);
                         
