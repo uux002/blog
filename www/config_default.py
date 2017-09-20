@@ -19,8 +19,8 @@ configs = {
     'session': {
         'secret': 'FredShao_Blog'
     },
-    #'domain':'http://fredshao.cc/static/blog_images/',
-    'domain':'http://127.0.0.1:9000/static/blog_images/',
+    'domain':'http://fredshao.cc/static/blog_images/',
+    #'domain':'http://127.0.0.1:9000/static/blog_images/',
 }
 
 
