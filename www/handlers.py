@@ -134,11 +134,13 @@ def edit_article(id):
 def new_article():
     pass
 
+'''
 @get('/error')
 def get_error():
     return{
         '__template__':'404.html'
     }
+'''
 
 
 @get('/resetpassword')

@@ -95,7 +95,23 @@ def response_factory(app, handler):
     @asyncio.coroutine
     def response(request):
         logging.info('Response handler...')
-        r = yield from handler(request)
+
+        try:
+            r = yield from handler(request)
+            if(hasattr(r,"status")):
+                if r.status == 404:
+                    # Handle 404
+                    resp = web.Response(body=app['__templating__'].get_template('404.html').render().encode('utf-8'))
+                    resp.content_type = 'text/html;charset=utf-8'
+                    return resp
+        except web.HTTPException as ex:
+            if ex.status == 404:
+                # Handle 404
+                resp = web.Response(body=app['__templating__'].get_template('404.html').render().encode('utf-8'))
+                resp.content_type = 'text/html;charset=utf-8'
+                return resp
+            raise
+
         if isinstance(r, web.StreamResponse):
             return r
         if isinstance(r, bytes):
@@ -151,6 +167,7 @@ def init(loop):
         logger_factory, auth_factory, response_factory
     ])
     init_jinja2(app, filters=dict(datetime=datetime_filter))
+    #aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('aiohttpdemo_polls', 'templates'))
     add_routes(app, 'handlers')
     add_static(app)
     srv = yield from loop.create_server(app.make_handler(), '127.0.0.1', 9000)
