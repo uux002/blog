@@ -44,8 +44,12 @@
 
                 <!-- Navbar user info -->
                 <div class="uk-width-auto nav-header-userinfo">
-                    <span><a href='/signin'>Sign in</a></span>
-                    <!--<span><a href="#">FredShao</a></span>-->
+                    {% if __user__ %}
+                        <span><a href='#'>{{ __user__.nickname }}</a></span>
+                        <span><a href='/signout'>Sign out</a></span>
+                    {% else %}
+                        <span><a href='/signin'>Sign in</a></span>
+                    {% endif %}
                 </div>
                 
             </div>

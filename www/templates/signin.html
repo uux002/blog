@@ -17,11 +17,71 @@
                     <a href="/"><img src="static/images/signin_img.png" class="signinsignup-img"></a>
                 </div>
                 <div id="signin-panel" class="uk-width-1-2 sub-panel">
-                    <input v-model="signin-email" class="uk-input signinsignup-input" type="email" placeholder="请输入邮箱"/>
-                    <input v-model="signin-password" class="uk-input signinsignup-input" type="password" placeholder="请输入密码"/>
-                    <button v-on:click="tosignin" class="uk-button uk-button-primary signinsignup-button">Sign in</button>
+                    <input v-model="signin_email" class="uk-input signinsignup-input" type="email" placeholder="请输入邮箱"/>
+                    <input v-model="signin_password" class="uk-input signinsignup-input" type="password" placeholder="请输入密码"/>
+                    <button v-on:click="tosignin" class="uk-button uk-button-primary signinsignup-button" id="button-signin">Sign in</button>
                 </div>
             </div>
         </div>
+
+        <script>
+            function validateEmail(email) {
+                var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+                return re.test(email.toLowerCase());
+            }
+
+            var signin = new Vue({
+                el:'#signin-panel',
+                data:{
+                    signin_email:'',
+                    signin_password:''
+                },
+                methods:{
+                    tosignin:function(){
+                        if(!validateEmail(this.signin_email.trim().toLowerCase())){
+                            alert("email error");
+                            UIkit.notification('<span style="font-size:14px;">请输入正确的Email' + '</span>', {status:'danger',timeout:'2000'});
+                            return;
+                        }
+
+                        if(this.signin_password.length < 6){
+                            alert("password error");
+                            UIkit.notification('<span style="font-size:14px;">请输入正确的密码' + '</span>', {status:'danger',timeout:'2000'});
+                            return;
+                        }
+
+                        $.post('/api/signin',{
+                            email:this.signin_email,
+                            passwd: CryptoJS.SHA1(this.signin_email + ':' + this.signin_password).toString()
+                        }, function(data,r){
+                            if(data){
+                                if(data['result'] < 0){
+                                    alert("Sign in faild:" + data['msg']);
+                                    UIkit.notification('<span style="font-size:14px;">登录失败: ' + data['msg'] + '</span>', {status:'danger',timeout:'2000'});
+                                }
+                                else{
+                                    //alert(data['msg'])
+                                    return location.assign('/');
+                                }
+                            }
+                            else{
+                                return location.assign('/')
+                            }
+                        });
+                    }
+                }
+            });
+
+
+           $(function(){
+                UIkit.notification("<span uk-icon='icon: check'></span> Message");
+                $("#button-signin").bind('click',function(){
+                    signin.tosignin();
+                });
+           });
+
+        </script>
+
+
     </body>
 </html>

@@ -17,12 +17,83 @@
                         <a href="/"><img src="static/images/signup_img2.png" class="signinsignup-img"></a>
                     </div>
                     <div id="signup-panel" class="uk-width-1-2 sub-panel">
-                        <input v-model="signup-email" class="uk-input signinsignup-input" type="email" placeholder="请输入邮箱"/>
-                        <input v-model="signup-password" class="uk-input signinsignup-input" type="password" placeholder="请输入密码"/>
-                        <input v-model="signup-password2" class="uk-input signinsignup-input" type="password" placeholder="请再次输入密码"/>
-                        <button v-on:click="tosignup" class="uk-button uk-button-primary signinsignup-button">Sign up</button>
+                        <input v-model="signup_nickname" class="uk-input signinsignup-input" type="email" placeholder="请输入昵称"/>
+                        <input v-model="signup_email" class="uk-input signinsignup-input" type="email" placeholder="请输入邮箱"/>
+                        <input v-model="signup_password" class="uk-input signinsignup-input" type="password" placeholder="请输入密码"/>
+                        <input v-model="signup_password2" class="uk-input signinsignup-input" type="password" placeholder="请再次输入密码"/>
+                        <button v-on:click="tosignup" class="uk-button uk-button-primary signinsignup-button" id="button-signup">Sign up</button>
                     </div>
                 </div>
             </div>
+
+
+            <script>
+                function validateEmail(email) {
+                    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+                    return re.test(email.toLowerCase());
+                }
+
+                var signup = new Vue({
+                    el:'#signup-panel',
+                    data:{
+                        signup_nickname:'',
+                        signup_email:'',
+                        signup_password:'',
+                        signup_password2:'',
+                    },
+                    methods:{
+                        tosignup:function(){
+                            if(!validateEmail(this.signup_email.trim().toLowerCase())){
+                                alert("请输入正确的Email");
+                                UIkit.notification('<span style="font-size:14px;">请输入正确的Email' + '</span>', {status:'danger',timeout:'2000'});
+                                return;
+                            }
+
+                            if(this.signup_password.length < 6){
+                                alert("密码长度不够啊");
+                                UIkit.notification('<span style="font-size:14px;">密码长度至少是6个字符' + '</span>', {status:'danger',timeout:'2000'});
+                                return;
+                            }
+
+                            if(this.signup_password !== this.signup_password2){
+                                alert("两次输入的密码不一样啊");
+                                UIkit.notification('<span style="font-size:14px;">两次输入的密码不一样噢' + '</span>', {status:'danger',timeout:'2000'});
+                                return;
+                            }
+
+                            $.post('/api/users',{
+                                nickname:this.signup_nickname,
+                                email:this.signup_email,
+                                password: CryptoJS.SHA1(this.signup_email + ':' + this.signup_password).toString()
+                            }, function(data,r){
+                                if(data){
+                                    if(data['result'] < 0){
+                                        alert("注册失败啊：" + data['msg']);
+                                        UIkit.notification('<span style="font-size:14px;">注册失败: ' + data['msg'] + '</span>', {status:'danger',timeout:'2000'});
+                                    }
+                                    else{
+                                        alert("注册成功");
+                                        return location.assign('/');
+                                    }
+                                }
+                                else{
+                                    alert("数据为空，不知道是否注册成功");
+                                    return location.assign('/');
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+                $(function(){
+                    $("#button-signup").bind('click',function(){
+                        alert("ready to signup");
+                        signup.tosignup();
+                    });
+                });
+            </script>
+    
         </body>
-    </html>
+
+</html>
