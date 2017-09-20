@@ -98,19 +98,17 @@ def response_factory(app, handler):
 
         try:
             r = yield from handler(request)
-            if(hasattr(r,"status")):
-                if r.status == 404:
-                    # Handle 404
-                    resp = web.Response(body=app['__templating__'].get_template('404.html').render().encode('utf-8'))
-                    resp.content_type = 'text/html;charset=utf-8'
-                    return resp
+            if isinstance(r,dict):
+                status = r.get('status')
+                if status != None:
+                    if status == 404:
+                        raise web.HTTPFound('/error')
         except web.HTTPException as ex:
             if ex.status == 404:
-                # Handle 404
-                resp = web.Response(body=app['__templating__'].get_template('404.html').render().encode('utf-8'))
-                resp.content_type = 'text/html;charset=utf-8'
-                return resp
+                raise web.HTTPFound('/error')
             raise
+
+
 
         if isinstance(r, web.StreamResponse):
             return r

@@ -130,22 +130,34 @@ def signup():
         '__template__':'signup.html'
     }
 
+
 @get('/edit/{id}')
 def edit_article(id):
+    
     article = yield from Article.find(id)
-
+    if article is None:
+        return {
+            'status':404
+        }
+        
+    return {
+        '__template__':'edit.html',
+        'article':article,
+    }
 
 @get('/new')
 def new_article():
-    pass
+    return{
+        '__template__':'edit.html'
+    }
 
-'''
+
 @get('/error')
 def get_error():
     return{
         '__template__':'404.html'
     }
-'''
+
 
 
 @get('/resetpassword')

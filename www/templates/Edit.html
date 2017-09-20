@@ -32,14 +32,14 @@
                             <option>分类1</option>
                             <option>分类2</option>
                             <option>分类3</option>
-                             <option>计算机图形学</option>
+                            <option>计算机图形学</option>
                         </select>
-                        <button v-on:click="delete_category" class="uk-button uk-button-danger" id="category-edit-del" style="width:30%">删除分类</button>
+                        <button v-on:click="to_delete_category" class="uk-button uk-button-danger" id="category-edit-del" style="width:30%">删除分类</button>
                     </div>
 
                     <div uk-margin style="margin-top:10px;">
-                        <input v-mode="new-category-name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:67%">
-                        <button v-on:click="add_category" class="uk-button uk-button-primary" id="category-edit-add" style="width:30%">添加分类</button>
+                        <input v-mode="v_new_category_name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:67%">
+                        <button v-on:click="to_add_category" class="uk-button uk-button-primary" id="category-edit-add" style="width:30%">添加分类</button>
                     </div>
 
                     <div uk-margin style="margin-top:80px">
@@ -91,18 +91,23 @@
         
         <script type="text/javascript">
             var app = new Vue({
-                    el:'#view-field',
+                    el:'#layout',
                     data:{
-                        viewhtml:"",
+                        //viewhtml:"",
+                        v_new_category_name:"",
                     },
                     methods:{
                         totest: function(data){
                             this.viewhtml = data;
+                        },
+                        to_delete_category:function(){
+                            alert("To Delete Category");
+                        },
+                        to_add_category:function(){
+                            alert("To Add Category");
                         }
-                    }
-                })
-
-            
+                   }
+            });           
             
             
             var testEditor;
@@ -167,6 +172,21 @@
                     var html = testEditor.getHTML();
                     app.totest(html);
                     
+                });
+
+
+                // 分类编辑面板
+                $("#category-edit-delete").bind('click',function(){
+                    alert("delete category");
+                    alert($("#category-edit-select").val());
+                });
+
+                $("#category-edit-add").bind('click',function(){
+                    alert("add category");
+                });
+
+                $("#category-panel-close").bind('click',function(){
+                    alert("clost category panel");
                 });
             };
             
