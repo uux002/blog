@@ -114,16 +114,21 @@ def cookie2account(cookie_str):
 @get('/')
 def index(request):
     return {
-        #'__template__':'index.html',
-        '__template__':'edit.html',
+        '__template__':'index.html',
+        #'__template__':'edit.html',
     }
 
-@get('/signinsignup')
-def signin_or_signup():
+@get('/signin')
+def signin():
     return{
-        '__template__':'signinsignup.html'
+        '__template__':'signin.html'
     }
 
+@get('/signup')
+def signup():
+    return{
+        '__template__':'signup.html'
+    }
 
 @get('/edit/{id}')
 def edit_article(id):

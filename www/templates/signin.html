@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="static/css/uikit.min.css" />
+        <link rel="stylesheet" href="static/css/blog/signinsignup.css"/>
+        <script src="static/js/vue.min.js"></script>
+        <script src="static/js/uikit.min.js"></script>
+        <script src="static/js/uikit-icons.min.js"></script>
+        <script src="static/website/js/jquery.min.js"></script>
+        <script src="static/js/sha1.min.js"></script>
+        <script src="static/js/sticky.min.js"></script>
+    </head>
+
+    <body>
+        <div class="uk-container">
+            <div class="uk-flex signin-signup-panel">
+                <div class="uk-width-1-2 sub-panel">
+                    <a href="/"><img src="static/images/signin_img.png" class="signinsignup-img"></a>
+                </div>
+                <div id="signin-panel" class="uk-width-1-2 sub-panel">
+                    <input v-model="signin-email" class="uk-input signinsignup-input" type="email" placeholder="请输入邮箱"/>
+                    <input v-model="signin-password" class="uk-input signinsignup-input" type="password" placeholder="请输入密码"/>
+                    <button v-on:click="tosignin" class="uk-button uk-button-primary signinsignup-button">Sign in</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
