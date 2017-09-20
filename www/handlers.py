@@ -139,7 +139,7 @@ def edit_article(id):
         return {
             'status':404
         }
-        
+
     return {
         '__template__':'edit.html',
         'article':article,
@@ -215,7 +215,7 @@ async def authenticate(*, email, passwd):
     if len(accounts) == 0:
         return{
             'result':-1,
-            'msg':"您的邮箱尚未加入真心话大冒险"
+            'msg':"您的邮箱尚未注册"
         }
 
     account = accounts[0]
