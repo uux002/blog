@@ -40,13 +40,13 @@
                     tosignin:function(){
                         if(!validateEmail(this.signin_email.trim().toLowerCase())){
                             alert("email error");
-                            UIkit.notification('<span style="font-size:14px;">请输入正确的Email' + '</span>', {status:'danger',timeout:'2000'});
+                            //UIkit.notification('<span style="font-size:14px;">请输入正确的Email' + '</span>', {status:'danger',timeout:'2000'});
                             return;
                         }
 
                         if(this.signin_password.length < 6){
                             alert("password error");
-                            UIkit.notification('<span style="font-size:14px;">请输入正确的密码' + '</span>', {status:'danger',timeout:'2000'});
+                            //UIkit.notification('<span style="font-size:14px;">请输入正确的密码' + '</span>', {status:'danger',timeout:'2000'});
                             return;
                         }
 
@@ -57,7 +57,7 @@
                             if(data){
                                 if(data['result'] < 0){
                                     alert("Sign in faild:" + data['msg']);
-                                    UIkit.notification('<span style="font-size:14px;">登录失败: ' + data['msg'] + '</span>', {status:'danger',timeout:'2000'});
+                                    //UIkit.notification('<span style="font-size:14px;">登录失败: ' + data['msg'] + '</span>', {status:'danger',timeout:'2000'});
                                 }
                                 else{
                                     //alert(data['msg'])
@@ -74,7 +74,7 @@
 
 
            $(function(){
-                UIkit.notification("<span uk-icon='icon: check'></span> Message");
+                //UIkit.notification("<span uk-icon='icon: check'></span> Message");
                 $("#button-signin").bind('click',function(){
                     signin.tosignin();
                 });
