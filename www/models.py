@@ -33,7 +33,6 @@ class User(Model):
 class Category(Model):
     __table__='category'
     id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
-    category_id = TinyIntField()
     scope = TinyIntField()
     title = StringField(ddl='varchar(50)')
     created_at = FloatField(default=time.time)
@@ -43,8 +42,10 @@ class Article(Model):
     __table__='article'
     id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
     author = StringField(ddl='varchar(50)')
-    belong_category = TinyIntField()
+    belong_category = StringField(ddl='varchar(50)')
     article_title = StringField(ddl='varchar(100)')
+    article_state = TinyIntField()
+    scope = TinyIntField()
     article_content = MediumTextField()
     last_update = FloatField(default=time.time)
     created_at = FloatField(default=time.time)

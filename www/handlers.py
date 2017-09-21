@@ -271,8 +271,29 @@ async def img_upload(request):
     }
 
 @post('/api/add_category')
-async def add_category(*, category):
-    pass
+async def add_category(*, category, scope):
+
+    categories_len = len(Category.findAll())
+
+    categories = Category.findAll("title=?",[category])
+
+    if len(categories) > 0:
+        return{
+            'result':-1,
+            'msg':"分类已经存在"
+        }
+
+    user = User(id=next_id(),account_id = uid,nickname = nickname)
+    new_category = Category(id=next_id(),scope=scope,title=category)
+    await new_category.save()
+
+    return{
+        'result':0,
+        'msg':'添加成功',
+        'value':new_category.id,
+        'scope':new_category.scope,
+    }
+
 
 @get('/api/get_all_category')
 async def get_all_category():

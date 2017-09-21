@@ -29,19 +29,19 @@ create table users(
 
 create table category(
 	`id` varchar(50) not null,
-	`category_id` tinyint not null,
-	`scope` tinyint not null,		# 分类作用域， 0 private, 1 public
 	`title` varchar(50) not null,	# 分类名
+	`scope` tinyint not null,		# 0 不公开，1公开
 	`created_at` real not null,
-	key `idx_category_id` (`category_id`),
 	primary key(`id`)
 )engine=innodb default charset=utf8;
 
 create table article(
 	`id` varchar(50) not null,
 	`author` varchar(50) not null,
-	`belong_category` tinyint not null,
+	`belong_category` varchar(50) not null,
 	`article_title` varchar(100) not null,
+	`article_state` tinyint not null,		# 文章状态，0 草稿，1 发布
+	`scope` tinyint not null,				# 作用域，0不公开，1公开
 	`article_content` MEDIUMTEXT,
 	`last_update` real not null,
 	`created_at` real not null,

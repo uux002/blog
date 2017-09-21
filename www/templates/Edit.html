@@ -27,19 +27,33 @@
             <div class="uk-container" id="add-category-layer">
                 <div class="category-edit-panel">
                     <div uk-margin>
-                        <select class="uk-select" id="category-edit-select" style="width:67%;">
-                            <option>选择分类</option>
-                            <option>分类1</option>
-                            <option>分类2</option>
-                            <option>分类3</option>
-                            <option>计算机图形学</option>
+                        <select class="uk-select" id="category-edit-select" style="width:49%;" onchange="on_category_edit_select_change(this.options[this.options.selectedIndex])">
+                        <!-- <select class="uk-select" id="category-edit-select" style="width:49%;" onchange="alert(this.options[this.selectedIndex].getAttribute('scope'));"> -->
+                            <option value="0" scope="1">选择分类</option>
+                            <option value="112" scope="1">分类1</option>
+                            <option value="555" scope="1">分类2</option>
+                            <option value="333" scope="1">分类3</option>
+                            <option value="444" scope="0">计算机图形学</option>
                         </select>
-                        <button v-on:click="to_delete_category" class="uk-button uk-button-danger" id="category-edit-del" style="width:30%">删除分类</button>
+                        <select class="uk-select" id="category-edit-select-scope" style="width:49%;">
+                            <option value="1">公开</option>
+                            <option value="0">私人</option>
+                        </select>
+                        
                     </div>
 
                     <div uk-margin style="margin-top:10px;">
-                        <input v-mode="v_new_category_name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:67%">
-                        <button v-on:click="to_add_category" class="uk-button uk-button-primary" id="category-edit-add" style="width:30%">添加分类</button>
+                        <button v-on:click="to_delete_category" class="uk-button uk-button-danger" id="category-edit-del" style="width:30%; margin-left:12%">删除</button>
+                        <button v-on:click="to_change_category" class="uk-button uk-button-danger" id="category-edit-change" style="width:30%; margin-left:12%">修改</button>
+                    </div>
+
+                    <div uk-margin style="margin-top:10px;">
+                        <input id="v_new_category_name" class="uk-input" type="text" placeholder="输入一个新的分类", style="width:47%">
+                        <select class="uk-select" id="category-edit-add-select-scope" style="width:20%;">
+                            <option value="1">公开</option>
+                            <option value="0">私人</option>
+                        </select>
+                        <button v-on:click="to_add_category" class="uk-button uk-button-primary" id="category-edit-add" style="width:30%">添加</button>
                     </div>
 
                     <div uk-margin style="margin-top:80px">
@@ -53,7 +67,7 @@
             <!-- 文章头部标题，分类，操作等 -->
             <div uk-margin style="margin-left:5%" id="article-form">
                 <input v-mode="article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
-                <select class="uk-select" id="form-horizontal-select" style="width:200px;">
+                <select class="uk-select" id="form-category-select" style="width:200px;">
                     <option>选择分类</option>
                     <option>分类1</option>
                     <option>分类2</option>
@@ -61,7 +75,7 @@
                     <option>计算机图形学</option>
                 </select>
 
-                <select class="uk-select" id="form-horizontal-select" style="width:100px;">
+                <select class="uk-select" id="form-authority-select" style="width:100px;">
                     <option>公开</option>
                     <option>私有</option>
                 </select>
@@ -109,6 +123,23 @@
                    }
             });           
             
+           
+            // 当分类列表编辑的时候选择改变
+            function on_category_edit_select_change(option){
+
+                var selectedValue = option.value;
+                if(selectedValue == "0"){
+                    $("#category-edit-select-scope").prop('disabled', 'disabled');
+                }
+                else{
+                    $("#category-edit-select-scope").prop('disabled', false);
+                }
+
+                var scope = option.getAttribute('scope');
+                $("#category-edit-select-scope").val(scope);                
+            }
+
+
             
             var testEditor;
             var jQuery = Zepto;  // 为了避免修改 flowChart.js 和 sequence-diagram.js 的源码，所以想支持 flowChart / sequenceDiagram 就得加上这一句
@@ -157,17 +188,24 @@
                     }
                 });
 
+                // 默认设置选择面板
+                var selectedIndex = $("#category-edit-select").get(0).selectedIndex;
+                var currOption = document.getElementById("category-edit-select").options[selectedIndex];
+                on_category_edit_select_change(currOption);
 
+                // 文章存草稿
                 $("#to-save-tmp").bind('click',function(){
                     var html = testEditor.getHTML();
                     alert(html);
                 });
 
+                // 文章发布
                 $("#to-public").bind('click',function(){
                     var html = testEditor.getHTML();
                     alert(html);
                 });
 
+                // 测试按钮
                 $("#to-test").bind('click',function(){
                     var html = testEditor.getHTML();
                     app.totest(html);
@@ -176,17 +214,81 @@
 
 
                 // 分类编辑面板
-                $("#category-edit-delete").bind('click',function(){
+                // 分类删除
+                $("#category-edit-del").bind('click',function(){
                     alert("delete category");
-                    alert($("#category-edit-select").val());
+                    var selectedValue = $("#category-edit-select").val();
+
+                    if(selectedValue == "0"){
+                        alert("请选择一个分类");
+                        return;
+                    }
+
+                    var selectedIndex = $("#category-edit-select").get(0).selectedIndex;
+                    var scope = document.getElementById("category-edit-select").options[selectedIndex].attr("scope");
+                    alert(scope);
+                    // send to server
+                    
+
+
+                    document.getElementById("category-edit-select").options.remove(selectedIndex); 
                 });
 
+
+                // 分类改变保存
+                $("#category-edit-change").bind('click',function(){
+
+                });
+
+
+                // 添加一个分类
                 $("#category-edit-add").bind('click',function(){
-                    alert("add category");
+                    // send to server
+                    var new_category_text = $("#v_new_category_name").val().trim();
+                    var add_scope = $("#category-edit-add-select-scope").val();
+                    if(!new_category_text){
+                        alert("请输入一个分类名称");
+                        return;
+                    }
+
+                    $.post('/api/add_category',{
+                        category:new_category_text,
+                        scope:add_scope,
+                    }, function(data,r){
+                        if(data){
+                            if(data['result'] < 0){
+                                alert("添加失败:" + data['msg']);
+                            }
+                            else{
+                                // 添加成功
+                                var value = data['id'];
+                                document.getElementById("category-edit-select").options.add(new Option(new_category_text,value));
+                                alert("添加成功");
+                            }
+                        }
+                        else{
+                            alert("添加失败");
+                        }
+                    });
+
+
+                    //alert(new_category_text.trim());
+                    //document.getElementById("category-edit-select").options.add(new Option("测试添加","6666"));
                 });
 
                 $("#category-panel-close").bind('click',function(){
-                    alert("clost category panel");
+                    // reference edit select
+                    var obj = document.getElementById("form-category-select").options;
+                    var selectObj = document.getElementById("category-edit-select");
+                    
+                    $("#category-edit-select").empty();
+
+                    for(var i = 0; i < selectObj.length; ++i){
+                        alert(selectObj.options[i].text + "  " + selectObj.options[i].value);
+
+                    }           
+                    
+
                 });
             };
             
