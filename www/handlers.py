@@ -28,6 +28,7 @@ def check_admin(request):
     if request.__user__ is None or not request.__user__.admin:
         raise APIPermissionError()
 
+
 def get_page_index(page_str):
     p = 1
     try:
@@ -37,14 +38,7 @@ def get_page_index(page_str):
     if p < 1:
         p = 1
     return p
-''' 
-def user2cookie(user, max_age):
-    # build cookie string by: id-expires-sha1
-    expires = str(int(time.time() + max_age))
-    s = '%s-%s-%s-%s' % (user.id, user.passwd, expires, _COOKIE_KEY)
-    L = [user.id, expires, hashlib.sha1(s.encode('utf-8')).hexdigest()]
-    return '-'.join(L)
-'''
+
 
 def account2cookie(account, max_age):
     expires = str(int(time.time() + max_age))
@@ -111,62 +105,6 @@ def cookie2account(cookie_str):
         return None
 
 
-@get('/')
-def index(request):
-    return {
-        '__template__':'index.html',
-        #'__template__':'edit.html',
-    }
-
-@get('/signin')
-def signin():
-    return{
-        '__template__':'signin.html'
-    }
-
-@get('/signup')
-def signup():
-    return{
-        '__template__':'signup.html'
-    }
-
-
-@get('/edit/{id}')
-def edit_article(id):
-    
-    article = yield from Article.find(id)
-    if article is None:
-        return {
-            'status':404
-        }
-
-    return {
-        '__template__':'edit.html',
-        'article':article,
-    }
-
-@get('/new')
-def new_article():
-    return{
-        '__template__':'edit.html'
-    }
-
-
-@get('/error')
-def get_error():
-    return{
-        '__template__':'404.html'
-    }
-
-
-
-@get('/resetpassword')
-def reset_password():
-    return{
-        '__template__':'reset_password.html'
-    }
-
-
 
 '''
 @get('/blog/{id}')
@@ -182,22 +120,94 @@ def get_blog(id):
         'comments': comments
     }
 '''
-'''
-@get('/register')
-def register():
-    return {
-        '__template__': 'register.html'
-    }
-'''
 
-'''
+
+# 登录页
 @get('/signin')
 def signin():
-    return {
-        '__template__': 'signin.html'
+    return{
+        '__template__':'signin.html'
     }
-'''
 
+# 注册页
+@get('/signup')
+def signup():
+    return{
+        '__template__':'signup.html'
+    }
+
+# 注销页
+@get('/signout')
+def signout(request):
+    referer = request.headers.get('Referer')
+    r = web.HTTPFound(referer or '/')
+    r.set_cookie(COOKIE_NAME, '-deleted-', max_age=0, httponly=True)
+    logging.info('user signed out.')
+    return r
+
+# 错误页
+@get('/error')
+def get_error():
+    return{
+        '__template__':'404.html'
+    }
+
+
+#####################  文章浏览相关  ######################
+# 主页 - 按照最后更新时间，获取博客列表 (权限检查，未登录时只返回公开的博客)
+@get('/')
+async def index(request):
+    
+    return {
+        '__template__':'index.html',
+        #'__template__':'edit.html',
+    }
+
+# 草稿页 - 返回所有草稿，最好按最后更新排序（权限检查，未登录时直接跳到错误页）
+@get('/articles/draft')
+async def get_all_draft(request):
+    pass
+
+@get('/articles/category/')
+
+
+
+####################  文章编辑相关  ########################
+
+# 文章编辑页
+@get('/edit/{id}')
+def edit_article(id):
+    
+    article = yield from Article.find(id)
+    if article is None:
+        return {
+            'status':404
+        }
+
+    return {
+        '__template__':'edit.html',
+        'article':article,
+    }
+
+# 新建文章页
+@get('/new')
+async def new_article():
+    categories = await Category.findAll()
+
+    return{
+        '__template__':'edit.html',
+        'categories':categories
+    }
+
+
+
+
+
+
+
+
+
+# API - 登录
 @post('/api/signin')
 async def authenticate(*, email, passwd):
     if not email:
@@ -219,7 +229,6 @@ async def authenticate(*, email, passwd):
         }
 
     account = accounts[0]
-    #user = users[0]
     # check passwd:
     sha1 = hashlib.sha1()
     sha1.update(account.id.encode('utf-8'))
@@ -241,7 +250,7 @@ async def authenticate(*, email, passwd):
     logging.info("============> 登录成功")
     return r
 
-
+# API - 图片上传
 @post('/api/imgupload')
 async def img_upload(request):
     reader = await request.multipart()
@@ -270,12 +279,10 @@ async def img_upload(request):
         'url':download_path
     }
 
+# API - 添加分类
 @post('/api/add_category')
 async def add_category(*, category, scope):
-
-    categories_len = len(Category.findAll())
-
-    categories = Category.findAll("title=?",[category])
+    categories = await Category.findAll("title=?",[category])
 
     if len(categories) > 0:
         return{
@@ -283,120 +290,76 @@ async def add_category(*, category, scope):
             'msg':"分类已经存在"
         }
 
-    user = User(id=next_id(),account_id = uid,nickname = nickname)
     new_category = Category(id=next_id(),scope=scope,title=category)
     await new_category.save()
 
     return{
         'result':0,
         'msg':'添加成功',
-        'value':new_category.id,
+        'id':new_category.id,
         'scope':new_category.scope,
     }
 
 
+# 获取所有的分类
 @get('/api/get_all_category')
 async def get_all_category():
-    pass
-
-
-@get('/signout')
-def signout(request):
-    referer = request.headers.get('Referer')
-    r = web.HTTPFound(referer or '/')
-    r.set_cookie(COOKIE_NAME, '-deleted-', max_age=0, httponly=True)
-    logging.info('user signed out.')
-    return r
-
-@get('/manage/')
-def manage():
-    return 'redirect:/manage/comments'
-
-@get('/manage/comments')
-def manage_comments(*, page='1'):
+    categories = await Category.findAll()
     return {
-        '__template__': 'manage_comments.html',
-        'page_index': get_page_index(page)
+        'result':0,
+        'value':categories,
     }
 
-@get('/manage/blogs')
-def manage_blogs(*, page='1'):
+# 删除分类
+@post('/api/delete_category')
+async def delete_category(*,id):
+    logging.info("删除分类 " + id)
+    if not id:
+        return {
+            'result':-1,
+            'msg':'要删除的分类id为空'
+        }
+    
+    category = await Category.find(id)
+    if category is not None:
+        logging.info("找到要删除的分类")
+        await category.remove()
+        return{
+            'result':0,
+            'msg':'删除分类成功'
+        }
+    
     return {
-        '__template__': 'manage_blogs.html',
-        'page_index': get_page_index(page)
+        'result':-1,
+        'msg':'没有找到要删除的分类'
     }
 
-@get('/manage/blogs/create')
-def manage_create_blog():
-    return {
-        '__template__': 'manage_blog_edit.html',
-        'id': '',
-        'action': '/api/blogs'
+# 修改分类
+@post('/api/change_category')
+async def change_category(*,id,scope):
+    if not id:
+        return{
+            'result':-1,
+            'msg':'要修改的分类id为空'
+        }
+    
+    category = await Category.find(id)
+    if category is not None:
+        logging.info("Scope = "+ scope)
+        category.scope = scope
+        await category.update()
+        return{
+            'result':0,
+            'msg':'分类修改成功',
+            'value':scope,
+        }
+        logging.info("修改成功：" + id + "  " + scope + "  " + category.scope)
+    return{
+        'result':-1,
+        'msg':'没有找到要修改的分类'
     }
 
-@get('/manage/blogs/edit')
-def manage_edit_blog(*, id):
-    return {
-        '__template__': 'manage_blog_edit.html',
-        'id': id,
-        'action': '/api/blogs/%s' % id
-    }
-
-@get('/manage/users')
-def manage_users(*, page='1'):
-    return {
-        '__template__': 'manage_users.html',
-        'page_index': get_page_index(page)
-    }
-
-@get('/api/comments')
-def api_comments(*, page='1'):
-    page_index = get_page_index(page)
-    num = yield from Comment.findNumber('count(id)')
-    p = Page(num, page_index)
-    if num == 0:
-        return dict(page=p, comments=())
-    comments = yield from Comment.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
-    return dict(page=p, comments=comments)
-
-@post('/api/blogs/{id}/comments')
-def api_create_comment(id, request, *, content):
-    user = request.__user__
-    if user is None:
-        raise APIPermissionError('Please signin first.')
-    if not content or not content.strip():
-        raise APIValueError('content')
-    blog = yield from Blog.find(id)
-    if blog is None:
-        raise APIResourceNotFoundError('Blog')
-    comment = Comment(blog_id=blog.id, user_id=user.id, user_name=user.name, user_image=user.image, content=content.strip())
-    yield from comment.save()
-    return comment
-
-@post('/api/comments/{id}/delete')
-def api_delete_comments(id, request):
-    check_admin(request)
-    c = yield from Comment.find(id)
-    if c is None:
-        raise APIResourceNotFoundError('Comment')
-    yield from c.remove()
-    return dict(id=id)
-
-@get('/api/users')
-def api_get_users(*, page='1'):
-    page_index = get_page_index(page)
-    num = yield from User.findNumber('count(id)')
-    p = Page(num, page_index)
-    if num == 0:
-        return dict(page=p, users=())
-    users = yield from User.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
-    for u in users:
-        u.passwd = '******'
-    return dict(page=p, users=users)
-
-_RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$')
-_RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
-
+# API - 注册
 @post('/api/users')
 async def api_register_user(*, nickname, email, password):
     if not nickname or not nickname.strip():
@@ -441,8 +404,11 @@ async def api_register_user(*, nickname, email, password):
     r.body = json.dumps(account, ensure_ascii=False).encode('utf-8')
     return r
 
-@get('/api/blogs')
-def api_blogs(*, page='1'):
+
+##########################  浏览相关  ###########################
+#获取第n页的博客
+@get('/api/blogs/page/{page}')
+def api_blogs_by_page(request,*, page='1'):
     page_index = get_page_index(page)
     num = yield from Blog.findNumber('count(id)')
     p = Page(num, page_index)
@@ -451,43 +417,38 @@ def api_blogs(*, page='1'):
     blogs = yield from Blog.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
     return dict(page=p, blogs=blogs)
 
+# 获取指定id的博客
 @get('/api/blogs/{id}')
-def api_get_blog(*, id):
+def api_get_blog(request,*, id):
     blog = yield from Blog.find(id)
     return blog
 
-@post('/api/blogs')
-def api_create_blog(request, *, name, summary, content):
-    check_admin(request)
-    if not name or not name.strip():
-        raise APIValueError('name', 'name cannot be empty.')
-    if not summary or not summary.strip():
-        raise APIValueError('summary', 'summary cannot be empty.')
-    if not content or not content.strip():
-        raise APIValueError('content', 'content cannot be empty.')
-    blog = Blog(user_id=request.__user__.id, user_name=request.__user__.name, user_image=request.__user__.image, name=name.strip(), summary=summary.strip(), content=content.strip())
-    yield from blog.save()
-    return blog
+# 获取指定分类的博客
+@get('/api/blogs/category/{id}')
+def api_get_blogs_by_category(request,*, id):
+    pass
 
-@post('/api/blogs/{id}')
-def api_update_blog(id, request, *, name, summary, content):
-    check_admin(request)
-    blog = yield from Blog.find(id)
-    if not name or not name.strip():
-        raise APIValueError('name', 'name cannot be empty.')
-    if not summary or not summary.strip():
-        raise APIValueError('summary', 'summary cannot be empty.')
-    if not content or not content.strip():
-        raise APIValueError('content', 'content cannot be empty.')
-    blog.name = name.strip()
-    blog.summary = summary.strip()
-    blog.content = content.strip()
-    yield from blog.update()
-    return blog
-
-@post('/api/blogs/{id}/delete')
+'''
+#删除指定id博客
+@post('/api/blogs/delete')
 def api_delete_blog(request, *, id):
     check_admin(request)
     blog = yield from Blog.find(id)
     yield from blog.remove()
     return dict(id=id)
+'''
+
+########################  编辑相关  #######################
+
+# 文章存草稿
+@post('/api/article/tmpsave')
+async def api_article_tmp_save(request, *, id, category, scope, content):
+    pass
+
+@post('/api/article/public')
+async def api_article_public(request, *, id, category, scope, content):
+    pass
+
+@post('/api/article/delete')
+async def api_article_delete(request, *, id):
+    pass

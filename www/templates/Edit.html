@@ -24,16 +24,11 @@
 
 
             <!-- 分类编辑面板 -->
-            <div class="uk-container" id="add-category-layer">
+            <div class="uk-container" id="add-category-layer" style="display:none">
                 <div class="category-edit-panel">
                     <div uk-margin>
                         <select class="uk-select" id="category-edit-select" style="width:49%;" onchange="on_category_edit_select_change(this.options[this.options.selectedIndex])">
-                        <!-- <select class="uk-select" id="category-edit-select" style="width:49%;" onchange="alert(this.options[this.selectedIndex].getAttribute('scope'));"> -->
-                            <option value="0" scope="1">选择分类</option>
-                            <option value="112" scope="1">分类1</option>
-                            <option value="555" scope="1">分类2</option>
-                            <option value="333" scope="1">分类3</option>
-                            <option value="444" scope="0">计算机图形学</option>
+                        <!-- 这里是分类编辑面板的分类列表 -->
                         </select>
                         <select class="uk-select" id="category-edit-select-scope" style="width:49%;">
                             <option value="1">公开</option>
@@ -67,23 +62,27 @@
             <!-- 文章头部标题，分类，操作等 -->
             <div uk-margin style="margin-left:5%" id="article-form">
                 <input v-mode="article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
-                <select class="uk-select" id="form-category-select" style="width:200px;">
-                    <option>选择分类</option>
-                    <option>分类1</option>
-                    <option>分类2</option>
-                    <option>分类3</option>
-                    <option>计算机图形学</option>
+                <select class="uk-select" id="form-category-select" style="width:200px;" onchange="on_form_category_select_change(this.options[this.options.selectedIndex])">
+                    <option value="0" scope="1">请选择分类</option>
+                    {% for category in categories %}
+                        {% if category.scope == 0 %}
+                            <option value={{category.id}} scope={{category.scope}}>[私有] {{category.title}}</option>
+                        {% else %}
+                            <option value={{category.id}} scope={{category.scope}}>[公开] {{category.title}}</option>
+                        {% endif %}
+                        
+                    {% endfor %}
                 </select>
 
-                <select class="uk-select" id="form-authority-select" style="width:100px;">
-                    <option>公开</option>
-                    <option>私有</option>
+                <select class="uk-select" id="article-scope" style="width:100px;">
+                    <option value="1">公开</option>
+                    <option value="0">私人</option>
                 </select>
                 
 
                 <button v-on:click="tmpsave" class="uk-button uk-button-danger" id="to-save-tmp" style="width:120px;">存草稿</button>
                 <button v-on:click="public" class="uk-button uk-button-primary" id="to-public" style="width:120px;">发布</button>
-                <button v-on:click="totest" class="uk-button uk-button-primary" id="to-test" style="width:120px;">编辑分类</button>
+                <button v-on:click="totest" class="uk-button uk-button-primary" id="to-edit-category" style="width:120px;">编辑分类</button>
             </div>
             <!-- 文章头部信息结束 -->
             
@@ -139,7 +138,24 @@
                 $("#category-edit-select-scope").val(scope);                
             }
 
+            // 文章
+            function on_form_category_select_change(option){
+                var selectedValue = option.value;
+            }
 
+            // 重置分类编辑页面分类列表
+            function reset_category_edit_select(){
+                var selectedIndex = $("#category-edit-select").get(0).selectedIndex;
+                var currOption = document.getElementById("category-edit-select").options[selectedIndex];
+                on_category_edit_select_change(currOption);
+            }
+
+            // 重置文章页面分类列表
+            function reset_form_category_select(){
+                var selectedIndex = $("#form-category-select").get(0).selectedIndex;
+                var currOption = document.getElementById("form-category-select").options[selectedIndex];
+                on_form_category_select_change(currOption);
+            }
             
             var testEditor;
             var jQuery = Zepto;  // 为了避免修改 flowChart.js 和 sequence-diagram.js 的源码，所以想支持 flowChart / sequenceDiagram 就得加上这一句
@@ -188,10 +204,13 @@
                     }
                 });
 
-                // 默认设置选择面板
-                var selectedIndex = $("#category-edit-select").get(0).selectedIndex;
-                var currOption = document.getElementById("category-edit-select").options[selectedIndex];
-                on_category_edit_select_change(currOption);
+
+                // 文章的分类默认选择第一项"请选择分类"
+                var selectedIndex = $("#form-category-select").get(0).selectedIndex;
+                var currOption = document.getElementById("form-category-select").options[selectedIndex];
+                on_form_category_select_change(currOption);
+
+                $("#add-category-layer").hide();
 
                 // 文章存草稿
                 $("#to-save-tmp").bind('click',function(){
@@ -205,18 +224,50 @@
                     alert(html);
                 });
 
-                // 测试按钮
-                $("#to-test").bind('click',function(){
-                    var html = testEditor.getHTML();
-                    app.totest(html);
+                // 打开分类编辑面板
+                $('#to-edit-category').bind('click',function(){
+                    // show category edit panel
+                    $("#add-category-layer").show();
+
+                     // clear all category
+                     $("#category-edit-select").empty();
                     
+                    // 向服务器请求分类列表
+                    $.get('/api/get_all_category',{
+
+                    },function(data,r){
+                        if(data){
+                            if(data['result'] < 0){
+                                alert("分类列表获取失败:" + data['msg']);
+                            }
+                            else{
+                                var defaultOption = new Option("请选择分类","0");
+                                defaultOption.setAttribute('scope',"1");
+                                document.getElementById("category-edit-select").options.add(defaultOption);
+                                on_category_edit_select_change(defaultOption);
+
+                                for (var i = 0; i < data['value'].length; ++i){
+                                    var category = data['value'][i];
+                                    var value = category.id;
+                                    var scope = category.scope;
+                                    var title = category.title;
+                                    var option = new Option(title,value);
+                                    option.setAttribute("scope",scope);
+                                    document.getElementById("category-edit-select").options.add(option);
+                                }
+                            }
+                        }
+                        else{
+                            alert("分类列表获取失败");
+                        }
+                    });
                 });
 
+            
 
                 // 分类编辑面板
                 // 分类删除
                 $("#category-edit-del").bind('click',function(){
-                    alert("delete category");
                     var selectedValue = $("#category-edit-select").val();
 
                     if(selectedValue == "0"){
@@ -225,19 +276,61 @@
                     }
 
                     var selectedIndex = $("#category-edit-select").get(0).selectedIndex;
-                    var scope = document.getElementById("category-edit-select").options[selectedIndex].attr("scope");
-                    alert(scope);
+                    var option = document.getElementById("category-edit-select").options[selectedIndex];
+                    var scope = option.getAttribute("scope");
+                    var value = option.value;
                     // send to server
-                    
-
-
-                    document.getElementById("category-edit-select").options.remove(selectedIndex); 
+                    $.post('/api/delete_category',{
+                        id:value,
+                    },function(data,r){
+                        if(data){
+                            if(data['result'] < 0){
+                                alert("删除分类失败:" + data['msg']);
+                            }
+                            else{
+                                document.getElementById("category-edit-select").options.remove(selectedIndex);
+                                reset_category_edit_select();
+                                alert("删除分类成功");
+                            }
+                        }else{
+                            alert("删除分类失败");
+                        }
+                    });
                 });
 
 
                 // 分类改变保存
                 $("#category-edit-change").bind('click',function(){
+                    var selectedIndex = $("#category-edit-select").get(0).selectedIndex;
+                    var option = document.getElementById("category-edit-select").options[selectedIndex];
+                    var scope = $("#category-edit-select-scope").val();
+                    var value = option.value;
+                    var newScope = parseInt(scope);
 
+                    if(value == "0"){
+                        alert("请选择一个分类");
+                        return;
+                    }
+
+
+                    $.post('/api/change_category',{
+                        id:value,
+                        scope:scope,
+                    },function(data,r){
+                        if(data){
+                            if(data['result'] < 0){
+                                alert("修改失败:" + data['msg']);
+                            }
+                            else{
+                                alert("修改成功:" + data['value']);
+                                option.setAttribute("scope",data['value']);
+                                reset_category_edit_select();
+                            }
+                        }
+                        else{
+                            alert("分类修改失败")
+                        }
+                    });
                 });
 
 
@@ -261,34 +354,48 @@
                             }
                             else{
                                 // 添加成功
-                                var value = data['id'];
-                                document.getElementById("category-edit-select").options.add(new Option(new_category_text,value));
-                                alert("添加成功");
+                                var id = data['id'];
+                                var scope = data['scope'];
+                                var option = new Option(new_category_text,id);
+                                option.setAttribute('scope',scope);
+                                document.getElementById("category-edit-select").options.add(option);
+                                $("#v_new_category_name").val("");
+                                alert("添加成功:" + id);
                             }
                         }
                         else{
                             alert("添加失败");
                         }
                     });
-
-
-                    //alert(new_category_text.trim());
-                    //document.getElementById("category-edit-select").options.add(new Option("测试添加","6666"));
                 });
 
+                // 分类编辑面板关闭
                 $("#category-panel-close").bind('click',function(){
                     // reference edit select
                     var obj = document.getElementById("form-category-select").options;
                     var selectObj = document.getElementById("category-edit-select");
                     
-                    $("#category-edit-select").empty();
+                    $("#form-category-select").empty();
 
                     for(var i = 0; i < selectObj.length; ++i){
-                        alert(selectObj.options[i].text + "  " + selectObj.options[i].value);
+                        var option = selectObj.options[i];
+                        var scope = option.getAttribute('scope');
+                        var text = option.text;
+                        var value = option.value;
 
-                    }           
+                        if(value != "0"){
+                            text = "[" + (scope == "0" ? "私人" : "公开") + "] " + text;
+                        }
+                        
+
+                        var newOption = new Option(text,value);
+                        newOption.setAttribute("scope",scope);
+                        obj.add(newOption);
+                    }
+
+                    reset_form_category_select();     
                     
-
+                    $("#add-category-layer").hide();
                 });
             };
             
