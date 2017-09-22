@@ -443,7 +443,29 @@ def api_delete_blog(request, *, id):
 # 文章存草稿
 @post('/api/article/tmpsave')
 async def api_article_tmp_save(request, *, id, category, scope, content):
-    pass
+    if not id:
+        return{
+            'result':-1
+        }
+    if not category:
+        return{
+            'result':-1
+        }
+    if not scope:
+        return{
+            'result':-1
+        }
+    if not content:
+        return{
+            'result':-1
+        }
+
+    article = Article.find(id)
+    if article is None:     # 新草稿保存
+        article_id = next_id()
+
+    else:                   # 更新草稿
+
 
 @post('/api/article/public')
 async def api_article_public(request, *, id, category, scope, content):
