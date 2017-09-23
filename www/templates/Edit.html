@@ -240,6 +240,9 @@
                                 var articleObj = document.getElementById("test-editormd");
                                 articleObj.setAttribute("article-id",new_article_id);
                             }
+                            else{
+                                alert("草稿保存失败，请确认内容");
+                            }
                         }
 
                     });
@@ -271,6 +274,7 @@
                                 alert("发布成功:" + new_article_id);
                                 //var articleObj = document.getElementById("test-editormd");
                                 //articleObj.setAttribute("article-id",new_article_id);
+                                return location.assign("/article/" + new_article_id);
                             }
                         }
 

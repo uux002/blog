@@ -1,0 +1,20 @@
+<html>
+    <head>
+            <link rel="stylesheet" href="static/css/uikit.min.css" />
+            <link rel="stylesheet" href="static/css/blog/drafts.css"/>
+            <script src="static/js/vue.min.js"></script>
+            <script src="static/js/uikit.min.js"></script>
+            <script src="static/js/uikit-icons.min.js"></script>
+            <script src="static/website/js/jquery.min.js"></script>
+            <script src="static/js/sha1.min.js"></script>
+            <script src="static/js/sticky.min.js"></script>
+    </head>
+
+    <body>
+        <div class="uk-container" id="drafts-container" style="border:1px solid red">
+            {% for draft in drafts %}
+            <div>{{ draft.article_title }}</div>
+            {% endfor %}
+        </div>
+    </body>
+</html>

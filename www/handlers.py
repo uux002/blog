@@ -158,16 +158,22 @@ def get_error():
 # 主页 - 按照最后更新时间，获取博客列表 (权限检查，未登录时只返回公开的博客)
 @get('/')
 async def index(request):
-    
+    articles = Article.find('article_state=?',[1])
     return {
         '__template__':'index.html',
         #'__template__':'edit.html',
+        'articles':articles
     }
 
 # 草稿页 - 返回所有草稿，最好按最后更新排序（权限检查，未登录时直接跳到错误页）
-@get('/articles/draft')
+@get('/drafts')
 async def get_all_draft(request):
-    pass
+    
+    drafts = await Article.findAll('article_state=?',[0])
+    return {
+        '__template__':'drafts.html',
+        'drafts':drafts
+    }
 
 
 @get('/article/{id}')
@@ -178,7 +184,7 @@ async def get_article(request, *, id):
             'status':404
         }
     return{
-        '__template__':'Article.html',
+        '__template__':'article.html',
         'article':article
     }
 
@@ -570,4 +576,19 @@ async def api_article_public(request, *, id, title, category_id, scope, content)
 
 @post('/api/article/delete')
 async def api_article_delete(request, *, id):
-    pass
+    if not id:
+        return{
+            'result':-1,
+            'msg':'id不能为空'
+        }
+    article = Article.find(id)
+    if article is not None:
+        await article.remove()
+        return{
+            'result':0,
+        }
+    else:
+        return {
+            'result':-1,
+            'msg':'没有找到要删除的文章'
+        }
