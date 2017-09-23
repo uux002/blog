@@ -63,14 +63,16 @@
                     </div>
                     <!-- right content side -->
                     <div class="uk-width-expand" id="content-side">
+                        {% if articles %}
+                        {% for article in articles %}
                         <div class="article-item">
                             <div class="article-title">
-                                这是一篇文章的标题
+                                {{ article.article_title }}
                             </div>
                             <div class="article-info">
-                                <span>Author: Fredshao</span>
-                                <span>最后更新: 2017-09-19</span>
-                                <span>所属分类</span>
+                                <span>Author: {{ article.author }}</span>
+                                <span>最后更新: {{ article.last_update|datetime }}</span>
+                                <span>{{ article.category_name }}</span>
                             </div>
                             <div class="article-read-info">
                                 <span>阅读人数:588</span>
@@ -78,6 +80,8 @@
                                 <span>分享</span>
                             </div>
                         </div> 
+                        {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>

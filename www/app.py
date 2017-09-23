@@ -146,6 +146,11 @@ def response_factory(app, handler):
     return response
 
 def datetime_filter(t):
+    timestamp = int(t)
+    dateArray = time.localtime(timestamp)
+    strTime = time.strftime("%Y-%m-%d %H:%M:%S",dateArray)
+    return strTime
+
     delta = int(time.time() - t)
     if delta < 60:
         return u'1分钟前'

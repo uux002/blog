@@ -158,7 +158,7 @@ def get_error():
 # 主页 - 按照最后更新时间，获取博客列表 (权限检查，未登录时只返回公开的博客)
 @get('/')
 async def index(request):
-    articles = Article.find('article_state=?',[1])
+    articles = await Article.findAll('article_state=?',[1])
     return {
         '__template__':'index.html',
         #'__template__':'edit.html',
