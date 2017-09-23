@@ -23,6 +23,7 @@ from datetime import datetime
 
 COOKIE_NAME = 'zhenxinhuadamaoxian_01'
 _COOKIE_KEY = configs.session.secret
+_ARTICLE_AUTHOR = '五分之1蓝'
 
 def check_admin(request):
     if request.__user__ is None or not request.__user__.admin:
@@ -168,7 +169,18 @@ async def index(request):
 async def get_all_draft(request):
     pass
 
-@get('/articles/category/')
+
+@get('/article/{id}')
+async def get_article(request, *, id):
+    article = await Article.find(id)
+    if article is None:
+        return {
+            'status':404
+        }
+    return{
+        '__template__':'Article.html',
+        'article':article
+    }
 
 
 
@@ -447,7 +459,7 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
         return{
             'result':-1
         }
-    if not category:
+    if not category_id:
         return{
             'result':-1
         }
@@ -471,12 +483,13 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
     else:
         article_title = title
 
-    article = Article.find(id)
+    article = await Article.find(id)
     if article is None:     # 新草稿保存
         article_id = next_id()
         
 
         article = Article(id=article_id,
+                          author="五分之1蓝",
                           belong_category=category_id,
                           category_name=category_name,
                           article_title=article_title,
@@ -490,14 +503,21 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
             'article_id':article_id,
             'msg':'保存成功'
         }
-    else:                   # 更新草稿
-        article.belong_category = category_id
-        article.category_name = category_name,
-        article.article_title = article_title,
-        article_state = 0,
-        article_scope=scope,
-        article.last_update = time.time
-        await article.update()
+    else:                   # 更新草稿,既然 created_at 不能更新，那就删除掉来的，重新创建（机智）
+        article_id = article.id
+        created_time = article.created_at
+        await article.remove()
+
+        article = Article(id=article_id,
+                          author=_ARTICLE_AUTHOR,
+                          belong_category = category_id,
+                          category_name = category_name,
+                          article_title = article_title,
+                          article_state = 0,
+                          scope = scope,
+                          article_content = content,
+                          created_at = created_time)
+        await article.save()
 
         return{
             'result':0,
@@ -508,8 +528,45 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
 
 
 @post('/api/article/public')
-async def api_article_public(request, *, id, category, scope, content):
-    pass
+async def api_article_public(request, *, id, title, category_id, scope, content):
+    if not id:
+        return { 'result':-1 }
+    if not title:
+        return { 'result':-1 }
+    if not category_id:
+        return { 'result': -1 }
+    if not scope:
+        return { 'result': -1 }
+    if not content:
+        return { 'result': -1 }
+
+    category = await Category.find(category_id)
+    category_name = "未分类"
+    if category is not None:
+        category_name = category.title
+
+    tmp_article = await Article.find(id)
+    if tmp_article is not None:
+        await tmp_article.remove()
+    
+    article_id = next_id()
+
+    article = Article(id=article_id,
+                      author=_ARTICLE_AUTHOR,
+                      belong_category = category_id,
+                      category_name = category_name,
+                      article_title = title,
+                      article_state = 1,
+                      scope = scope,
+                      article_content = content)
+    await article.save()
+
+    return{
+        'result':0,
+        'article_id':article.id,
+    }
+    
+
 
 @post('/api/article/delete')
 async def api_article_delete(request, *, id):

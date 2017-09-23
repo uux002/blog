@@ -39,7 +39,8 @@ create table article(
 	`id` varchar(50) not null,
 	`author` varchar(50) not null,
 	`belong_category` varchar(50) not null,
-	`article_title` varchar(100) not null,
+	`category_name` varchar(50) not null,
+	`article_title` varchar(100),
 	`article_state` tinyint not null,		# 文章状态，0 草稿，1 发布
 	`scope` tinyint not null,				# 作用域，0不公开，1公开
 	`article_content` MEDIUMTEXT,

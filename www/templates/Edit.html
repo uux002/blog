@@ -89,7 +89,7 @@
             </br>
 
             <!-- 正文编辑 -->
-            <div class="editormd" id="test-editormd">
+            <div class="editormd" id="test-editormd" article-id="-1">
                 <textarea></textarea>
             </div>
 
@@ -214,21 +214,67 @@
 
                 // 文章存草稿
                 $("#to-save-tmp").bind('click',function(){
-                    var html = testEditor.getHTML();
-                    alert(html);
+                    alert("tmp save");
+
+                    var articleObj = document.getElementById("test-editormd");
+                    var article_id = articleObj.getAttribute("article-id");
                     article_title = $("#form-article-title").val();
                     var selectedIndex = $("#form-category-select").get(0).selectedIndex;
                     var currOption = document.getElementById("form-category-select").options[selectedIndex];
-                    article_category = currOption.value;
-                    category_title = currOption.text;
-                    scope = $("#form-article-scope").val();
+                    var article_category = currOption.value;
+                    var category_title = currOption.text;
+                    var scope = $("#form-article-scope").val();
+                    var content = testEditor.getHTML();
+                    
+                    $.post('/api/article/tmpsave',{
+                        id:article_id,
+                        title:article_title,
+                        category_id:article_category,
+                        scope:scope,
+                        content:content,
+                    },function(data,r){
+                        if(data){
+                            if(data['result'] >= 0){
+                                var new_article_id = data['article_id'];
+                                alert("存草稿成功:" + new_article_id);
+                                var articleObj = document.getElementById("test-editormd");
+                                articleObj.setAttribute("article-id",new_article_id);
+                            }
+                        }
+
+                    });
                     
                 });
 
                 // 文章发布
                 $("#to-public").bind('click',function(){
-                    var html = testEditor.getHTML();
-                    alert(html);
+                    var articleObj = document.getElementById("test-editormd");
+                    var article_id = articleObj.getAttribute("article-id");
+                    article_title = $("#form-article-title").val();
+                    var selectedIndex = $("#form-category-select").get(0).selectedIndex;
+                    var currOption = document.getElementById("form-category-select").options[selectedIndex];
+                    var article_category = currOption.value;
+                    var category_title = currOption.text;
+                    var scope = $("#form-article-scope").val();
+                    var content = testEditor.getHTML();
+                    
+                    $.post('/api/article/public',{
+                        id:article_id,
+                        title:article_title,
+                        category_id:article_category,
+                        scope:scope,
+                        content:content,
+                    },function(data,r){
+                        if(data){
+                            if(data['result'] >= 0){
+                                var new_article_id = data['article_id'];
+                                alert("发布成功:" + new_article_id);
+                                //var articleObj = document.getElementById("test-editormd");
+                                //articleObj.setAttribute("article-id",new_article_id);
+                            }
+                        }
+
+                    });
                 });
 
                 // 打开分类编辑面板
