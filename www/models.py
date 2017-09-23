@@ -43,6 +43,7 @@ class Article(Model):
     id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
     author = StringField(ddl='varchar(50)')
     belong_category = StringField(ddl='varchar(50)')
+    category_name = StringField(ddl='varchar(50)')
     article_title = StringField(ddl='varchar(100)')
     article_state = TinyIntField()
     scope = TinyIntField()

@@ -61,7 +61,7 @@
 
             <!-- 文章头部标题，分类，操作等 -->
             <div uk-margin style="margin-left:5%" id="article-form">
-                <input v-mode="article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
+                <input id="form-article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
                 <select class="uk-select" id="form-category-select" style="width:200px;" onchange="on_form_category_select_change(this.options[this.options.selectedIndex])">
                     <option value="0" scope="1">请选择分类</option>
                     {% for category in categories %}
@@ -74,7 +74,7 @@
                     {% endfor %}
                 </select>
 
-                <select class="uk-select" id="article-scope" style="width:100px;">
+                <select class="uk-select" id="form-article-scope" style="width:100px;">
                     <option value="1">公开</option>
                     <option value="0">私人</option>
                 </select>
@@ -216,6 +216,13 @@
                 $("#to-save-tmp").bind('click',function(){
                     var html = testEditor.getHTML();
                     alert(html);
+                    article_title = $("#form-article-title").val();
+                    var selectedIndex = $("#form-category-select").get(0).selectedIndex;
+                    var currOption = document.getElementById("form-category-select").options[selectedIndex];
+                    article_category = currOption.value;
+                    category_title = currOption.text;
+                    scope = $("#form-article-scope").val();
+                    
                 });
 
                 // 文章发布

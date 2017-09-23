@@ -442,7 +442,7 @@ def api_delete_blog(request, *, id):
 
 # 文章存草稿
 @post('/api/article/tmpsave')
-async def api_article_tmp_save(request, *, id, category, scope, content):
+async def api_article_tmp_save(request, *, id, title, category_id, scope, content):
     if not id:
         return{
             'result':-1
@@ -460,11 +460,51 @@ async def api_article_tmp_save(request, *, id, category, scope, content):
             'result':-1
         }
 
+    category = await Category.find(category_id)
+    if category is None:
+        category_name = "未分类"
+    else:
+        category_name = category.title
+        
+    if not title:
+        article_title = time.time
+    else:
+        article_title = title
+
     article = Article.find(id)
     if article is None:     # 新草稿保存
         article_id = next_id()
+        
 
+        article = Article(id=article_id,
+                          belong_category=category_id,
+                          category_name=category_name,
+                          article_title=article_title,
+                          article_state=0,
+                          scope=scope,
+                          article_content=content)
+        await article.save()
+
+        return {
+            'result':0,
+            'article_id':article_id,
+            'msg':'保存成功'
+        }
     else:                   # 更新草稿
+        article.belong_category = category_id
+        article.category_name = category_name,
+        article.article_title = article_title,
+        article_state = 0,
+        article_scope=scope,
+        article.last_update = time.time
+        await article.update()
+
+        return{
+            'result':0,
+            'article_id':article.id,
+            'msg':'保存成功'
+        }
+
 
 
 @post('/api/article/public')
