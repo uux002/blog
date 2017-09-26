@@ -194,17 +194,23 @@ async def get_article(request, *, id):
 
 # 文章编辑页
 @get('/edit/{id}')
-def edit_article(id):
+async def edit_article(request, * , id):
     
-    article = yield from Article.find(id)
+    article = await Article.find(id)
+    
+
     if article is None:
+        logging.info("================> 找不到要编辑的文章 " + id)
         return {
             'status':404
         }
 
+    categories = await Category.findAll()
+
     return {
         '__template__':'edit.html',
         'article':article,
+        'categories':categories
     }
 
 # 新建文章页

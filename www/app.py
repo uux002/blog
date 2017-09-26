@@ -102,9 +102,11 @@ def response_factory(app, handler):
                 status = r.get('status')
                 if status != None:
                     if status == 404:
+                        logging.info("################# Get Error !!!!!!!!!!!!!!")
                         raise web.HTTPFound('/error')
         except web.HTTPException as ex:
             if ex.status == 404:
+                logging.info("++++++++++++++++++++++++++++++++++ Get Error !!!!!!!!!!!!!!")
                 raise web.HTTPFound('/error')
             raise
 
