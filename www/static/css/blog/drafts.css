@@ -1,3 +1,69 @@
 #drafts-container{
     padding-top:50px;
+    min-width: 600px;
+}
+
+.draft-header{
+    margin-bottom: 50px;
+}
+
+.draft-item{
+    /*border:1px solid green;*/
+    margin-top:10px;
+}
+
+.draft-item-operate {
+    margin-left:10px;
+}
+
+.draft-item-operate a {
+    color:gray;
+}
+
+.draft-item-operate a:link{
+    color:gray;
+    text-decoration: none;
+}
+
+.draft-item-operate a:hover{
+    color:black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.draft-item-operate a:visited{
+    color:gray;
+    text-decoration: none;
+}
+
+
+.draft-info{
+    font-size: 13px;
+    margin-right:10px;
+}
+
+.draft-title{
+    margin-right:50px;
+}
+
+
+.draft-title a{
+    color:gray;
+    text-decoration: none;
+    font-size:24px;
+}
+
+.draft-title a:hover{
+    color:black;
+    text-decoration: none;
+}
+
+.draft-item-operate button{
+    font-size:10px;
+    margin-top:-10px;
+    width:100px;
+}
+
+.draft-item-info{
+    margin-top:3px;
 }

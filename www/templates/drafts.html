@@ -11,9 +11,40 @@
     </head>
 
     <body>
-        <div class="uk-container" id="drafts-container" style="border:1px solid red">
+        <div class="uk-container" id="drafts-container">
+            <!--
             {% for draft in drafts %}
             <div>{{ draft.article_title }}</div>
+            {% endfor %}
+            -->
+
+            <div class="draft-header">
+                <h1>Drafts</h1>
+            </div>
+
+            {% for draft in drafts %}
+
+            <div class="draft-item">
+                <div class="draft-title-and-operates">
+                    <div>
+                        <span class="draft-title" uid="{{ draft.id }}"><a>{{ draft.article_title }}</a></span>
+                        <span class="draft-item-operate"><button class="uk-button uk-button-primary uk-button-small">编辑</button></span>
+                        <span class="draft-item-operate"><button class="uk-button uk-button-danger uk-button-small">删除</button></span>
+                    </div>
+                </div>
+                <div class="draft-item-info">
+                    <span class="draft-info">{{ draft.author }}</span>
+                    <span class="draft-info">{{ draft.category_name }}</span>
+                    {% if draft.scope == 0 %}
+                    <span class="draft-info">私人</span>
+                    {% else %}
+                    <span class="draft-info">公开</span>
+                    {% endif %}
+                    <span class="draft-info">最后更新: {{ draft.last_update|datetime }}</span>
+                    <span class="draft-info">创建: {{ draft.created_at|datetime }}</span>
+                </div>
+            </div>
+            <hr>
             {% endfor %}
         </div>
     </body>
