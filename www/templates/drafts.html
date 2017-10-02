@@ -64,6 +64,25 @@
                     var article_id = $(this).parent().parent().attr("uid");
                     location.assign('/edit?id=' + article_id);
                 });
+
+                $(".draft-info-delete").click(function(){
+                    var article_obj = $(this).parent().parent();
+                    var article_id = $(this).parent().parent().attr("uid");
+                    var article_title = article_obj.children("draft-title").text();
+                    alert(article_id);
+                    $.post('/api/article/delete',{
+                        id:article_id,
+                    },function(data,r){
+                        if(data){
+                            if(data['result'] < 0){
+                                alert("删除失败：" + data['msg']);
+                            }else{
+                                alert("删除成功");
+                                location.assign('/drafts');
+                            }
+                        }
+                    });
+                });
             });
         </script>
 

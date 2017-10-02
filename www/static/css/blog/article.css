@@ -1,0 +1,9 @@
+.article-back-btn a{
+    color:gray;
+}
+
+.article-back-btn a:hover{
+    color:black;
+    text-decoration: none;
+    cursor: pointer;
+}

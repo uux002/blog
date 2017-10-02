@@ -31,7 +31,7 @@
 
     <body>
         
-        <div class="uk-container" id="index-container" style="border:1px solid red">
+        <div class="uk-container" id="index-container">
             <h3>Simple Travel</h3>
             <!-- Navbar -->
             <div id="nav-header" class="uk-flex">
@@ -65,9 +65,9 @@
                     <div class="uk-width-expand" id="content-side">
                         {% if articles %}
                         {% for article in articles %}
-                        <div class="article-item">
+                        <div class="article-item" uid="{{ article.id }}">
                             <div class="article-title">
-                                {{ article.article_title }}
+                                <a href="/article?id={{ article.id }}">{{ article.article_title }}</a>
                             </div>
                             <div class="article-info">
                                 <span>Author: {{ article.author }}</span>

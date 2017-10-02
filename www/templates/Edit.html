@@ -116,7 +116,7 @@
         
         <script type="text/javascript">
             var app = new Vue({
-                    el:'#layout',
+                    el:'#view-field',
                     data:{
                         //viewhtml:"",
                         v_new_category_name:"",
@@ -242,6 +242,12 @@
                     var scope = $("#form-article-scope").val();
                     var html_content = testEditor.getHTML();
                     var md_content = testEditor.getMarkdown();
+
+                    alert(html_content);
+
+                    $("#view-field").html(html_content);
+                    return;
+
                     $.post('/api/article/tmpsave',{
                         id:article_id,
                         title:article_title,
@@ -276,14 +282,16 @@
                     var article_category = currOption.value;
                     var category_title = currOption.text;
                     var scope = $("#form-article-scope").val();
-                    var content = testEditor.getHTML();
+                    var html_content = testEditor.getHTML();
+                    var md_content = testEditor.getMarkdown();
                     
                     $.post('/api/article/public',{
                         id:article_id,
                         title:article_title,
                         category_id:article_category,
                         scope:scope,
-                        content:content,
+                        html_content:html_content,
+                        md_content:md_content,
                     },function(data,r){
                         if(data){
                             if(data['result'] >= 0){
@@ -291,7 +299,8 @@
                                 alert("发布成功:" + new_article_id);
                                 //var articleObj = document.getElementById("test-editormd");
                                 //articleObj.setAttribute("article-id",new_article_id);
-                                return location.assign("/article/" + new_article_id);
+                                //return location.assign("/article/" + new_article_id);
+                                return location.assign('/');
                             }
                         }
 

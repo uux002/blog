@@ -5,22 +5,59 @@
     <title>md编辑器后台编辑页</title>
     <link rel="stylesheet" href="static/website/css/style.css" />
     <link rel="stylesheet" href="static/css/editormd.css" />
+    <link rel="stylesheet" href="static/css/blog/article.css"/>
+
     <style type="text/css">
+        
         .markdown-body{
-            width: 50%;
-            margin: 30px auto;
+            margin-left:auto;
+            margin-right:auto;
+            margin-top:50px;
+            margin-bottom:30px;
+            max-width:960px;
         }
+        
     </style>
 </head>
 <body>
-
- <div class="markdown-body editormd-preview-container">
-        <h1 id="h1-test"><a name="Test" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Test</h1><ul> <li>111</li><li>222</li><li>333</li><li>444<ul> <li>555</li><li>666</li></ul> </li></ul>
+ <div class="markdown-body">
+     {% if article %}
+        <div id="doc-content" style=>
+                <textarea style="display:none;"> {{ article.md_content }}</textarea>
+        </div>
+    {% endif %}
+    <div>
+        <span class="article-back-btn"><a href="/">back</a></span>
+    </div>
  </div>  
 
 
  <script src="static/website/js/zepto.min.js"></script>
  <script src="static/editormd.js"></script>
+ <script src="static/lib/marked.min.js"></script>
+ <script src="static/lib/prettify.min.js"></script>
+ <script src="static/lib/raphael.min.js"></script>
+ <script src="static/lib/underscore.min.js"></script>
+ <script src="static/lib/sequence-diagram.min.js"></script>
+ <script src="static/lib/flowchart.min.js"></script>
+ <script src="static/lib/jquery.flowchart.min.js"></script>
+
+
+ 
+ <script type="text/javascript">
+    var testEditor;
+    $(function () {
+        testEditor = editormd.markdownToHTML("doc-content", {//注意：这里是上面DIV的id
+            htmlDecode: "style,script,iframe",
+            emoji: true,
+            taskList: true,
+            tex: true, // 默认不解析
+            flowChart: true, // 默认不解析
+            sequenceDiagram: true, // 默认不解析
+            
+    });});
+ </script>
+ 
 
 </body>
 </html>

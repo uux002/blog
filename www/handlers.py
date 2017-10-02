@@ -179,7 +179,7 @@ async def get_all_draft(request):
     }
 
 
-@get('/article/{id}')
+@get('/article')
 async def get_article(request, *, id):
     article = await Article.find(id)
     if article is None:
@@ -548,7 +548,7 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, md_con
 
 
 @post('/api/article/public')
-async def api_article_public(request, *, id, title, category_id, scope, content):
+async def api_article_public(request, *, id, title, category_id, scope, md_content, html_content):
     if not id:
         return { 'result':-1 }
     if not title:
@@ -557,7 +557,9 @@ async def api_article_public(request, *, id, title, category_id, scope, content)
         return { 'result': -1 }
     if not scope:
         return { 'result': -1 }
-    if not content:
+    if not md_content:
+        return { 'result': -1 }
+    if not html_content:
         return { 'result': -1 }
 
     category = await Category.find(category_id)
@@ -565,20 +567,38 @@ async def api_article_public(request, *, id, title, category_id, scope, content)
     if category is not None:
         category_name = category.title
 
+    update = False
+
     tmp_article = await Article.find(id)
     if tmp_article is not None:
+        last_update = tmp_article.last_update
+        update = True
         await tmp_article.remove()
     
     article_id = next_id()
 
-    article = Article(id=article_id,
-                      author=_ARTICLE_AUTHOR,
-                      belong_category = category_id,
-                      category_name = category_name,
-                      article_title = title,
-                      article_state = 1,
-                      scope = scope,
-                      article_content = content)
+    if update:
+        article = Article(id=article_id,
+                        author=_ARTICLE_AUTHOR,
+                        belong_category = category_id,
+                        category_name = category_name,
+                        article_title = title,
+                        article_state = 1,
+                        scope = scope,
+                        md_content = md_content,
+                        html_content = html_content,
+                        last_update = last_update)
+    else:
+        article = Article(id=article_id,
+                        author=_ARTICLE_AUTHOR,
+                        belong_category = category_id,
+                        category_name = category_name,
+                        article_title = title,
+                        article_state = 1,
+                        scope = scope,
+                        md_content = md_content,
+                        html_content = html_content)
+    
     await article.save()
 
     return{
@@ -595,7 +615,7 @@ async def api_article_delete(request, *, id):
             'result':-1,
             'msg':'id不能为空'
         }
-    article = Article.find(id)
+    article = await Article.find(id)
     if article is not None:
         await article.remove()
         return{
