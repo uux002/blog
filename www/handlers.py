@@ -25,6 +25,9 @@ COOKIE_NAME = 'zhenxinhuadamaoxian_01'
 _COOKIE_KEY = configs.session.secret
 _ARTICLE_AUTHOR = '五分之1蓝'
 
+_RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$')
+_RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
+
 def check_admin(request):
     if request.__user__ is None or not request.__user__.admin:
         raise APIPermissionError()
@@ -193,11 +196,9 @@ async def get_article(request, *, id):
 ####################  文章编辑相关  ########################
 
 # 文章编辑页
-@get('/edit/{id}')
-async def edit_article(request, * , id):
-    
+@get('/edit')
+async def edit_article(request, *, id):
     article = await Article.find(id)
-    
 
     if article is None:
         logging.info("================> 找不到要编辑的文章 " + id)
@@ -209,8 +210,9 @@ async def edit_article(request, * , id):
 
     return {
         '__template__':'edit.html',
+        'categories':categories,
+        'id':id,
         'article':article,
-        'categories':categories
     }
 
 # 新建文章页
@@ -391,7 +393,7 @@ async def api_register_user(*, nickname, email, password):
             'result':-1,
             'msg':"请输入昵称"
         }
-    if not email or not _RE_EMAIL.match(email):
+    if not email: #or not _RE_EMAIL.match(email):
          return{
             'result':-1,
             'msg':"请输入正确的邮箱"
@@ -466,7 +468,7 @@ def api_delete_blog(request, *, id):
 
 # 文章存草稿
 @post('/api/article/tmpsave')
-async def api_article_tmp_save(request, *, id, title, category_id, scope, content):
+async def api_article_tmp_save(request, *, id, title, category_id, scope, md_content, html_content):
     if not id:
         return{
             'result':-1
@@ -479,7 +481,11 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
         return{
             'result':-1
         }
-    if not content:
+    if not md_content:
+        return{
+            'result':-1
+        }
+    if not html_content:
         return{
             'result':-1
         }
@@ -507,7 +513,8 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
                           article_title=article_title,
                           article_state=0,
                           scope=scope,
-                          article_content=content)
+                          md_content=md_content,
+                          html_content=html_content)
         await article.save()
 
         return {
@@ -527,7 +534,8 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, conten
                           article_title = article_title,
                           article_state = 0,
                           scope = scope,
-                          article_content = content,
+                          md_content = md_content,
+                          html_content = html_content,
                           created_at = created_time)
         await article.save()
 

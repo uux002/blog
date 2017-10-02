@@ -60,10 +60,50 @@
 
 .draft-item-operate button{
     font-size:10px;
-    margin-top:-10px;
+    /*margin-top:-10px;*/
     width:100px;
 }
 
 .draft-item-info{
     margin-top:3px;
+}
+
+.draft-info-edit a{
+    font-size:13px;
+    color:blue;
+}
+
+.draft-info-edit a:link{
+    color:blue;
+}
+
+.draft-info-edit a:hover{
+    color:blue;
+    text-decoration: none;
+}
+
+.draft-info-edit a:visited{
+    color:blue;
+}
+
+.draft-info-delete{
+    margin-left:5px;
+}
+
+.draft-info-delete a{
+    font-size:13px;
+    color:red;
+}
+
+.draft-info-delete a:link{
+    color:red;
+}
+
+.draft-info-delete a:hover{
+    color:red;
+    text-decoration:none;
+}
+
+.draft-info-delete a:visited{
+    color:red;
 }

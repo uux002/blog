@@ -43,7 +43,8 @@ create table article(
 	`article_title` varchar(100),
 	`article_state` tinyint not null,		# 文章状态，0 草稿，1 发布
 	`scope` tinyint not null,				# 作用域，0不公开，1公开
-	`article_content` MEDIUMTEXT,
+	`md_content` MEDIUMTEXT,				# 用于编辑的 Markdown 内容
+	`html_content` MEDIUMTEXT,				# 用于展示的 html 内容
 	`last_update` real not null,
 	`created_at` real not null,
 	key `idx_last_update` (`last_update`),

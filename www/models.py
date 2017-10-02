@@ -47,6 +47,7 @@ class Article(Model):
     article_title = StringField(ddl='varchar(100)')
     article_state = TinyIntField()
     scope = TinyIntField()
-    article_content = MediumTextField()
+    md_content = MediumTextField()
+    html_content = MediumTextField()
     last_update = FloatField(default=time.time)
     created_at = FloatField(default=time.time)

@@ -61,9 +61,15 @@
 
             <!-- 文章头部标题，分类，操作等 -->
             <div uk-margin style="margin-left:5%" id="article-form">
-                <input id="form-article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
+                {% if article %}
+                    <input id="form-article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%" value="{{ article.article_title }}">
+                {% else %}
+                    <input id="form-article-title" class="uk-input" type="text" placeholder="请输入标题" style="width:30%">
+                {% endif %}
+                
                 <select class="uk-select" id="form-category-select" style="width:200px;" onchange="on_form_category_select_change(this.options[this.options.selectedIndex])">
-                    <option value="0" scope="1">请选择分类</option>
+                    
+                <option value="0" scope="1">请选择分类</option>
                     {% for category in categories %}
                         {% if category.scope == 0 %}
                             <option value={{category.id}} scope={{category.scope}}>[私有] {{category.title}}</option>
@@ -89,9 +95,15 @@
             </br>
 
             <!-- 正文编辑 -->
-            <div class="editormd" id="test-editormd" article-id="-1">
-                <textarea></textarea>
-            </div>
+            {% if article %}
+                <div class="editormd" id="test-editormd" article-id="{{ id }}">
+                    <textarea>{{ article.md_content }}</textarea>
+                </div>
+            {% else %}
+                <div class="editormd" id="test-editormd" article-id="-1">
+                    <textarea></textarea>
+                </div>
+            {% endif %}
 
         </div>
         
@@ -205,6 +217,10 @@
                 });
 
 
+                {% if article %}
+                    $("#form-category-select").val("{{ article.belong_category }}");
+                {% endif %}
+
                 // 文章的分类默认选择第一项"请选择分类"
                 var selectedIndex = $("#form-category-select").get(0).selectedIndex;
                 var currOption = document.getElementById("form-category-select").options[selectedIndex];
@@ -224,14 +240,15 @@
                     var article_category = currOption.value;
                     var category_title = currOption.text;
                     var scope = $("#form-article-scope").val();
-                    var content = testEditor.getHTML();
-                    
+                    var html_content = testEditor.getHTML();
+                    var md_content = testEditor.getMarkdown();
                     $.post('/api/article/tmpsave',{
                         id:article_id,
                         title:article_title,
                         category_id:article_category,
                         scope:scope,
-                        content:content,
+                        html_content:html_content,
+                        md_content:md_content,
                     },function(data,r){
                         if(data){
                             if(data['result'] >= 0){
