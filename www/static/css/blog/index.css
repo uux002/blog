@@ -77,12 +77,21 @@
 
 
 /* article */
-.article-item1 {
-    border:2px solid yellow;
+.article-box{
+    margin-bottom: 20px;
 }
 
 .article-title{ 
     font-size:20px;
+}
+
+.article-title a{
+    color:gray;
+}
+
+.article-title a:hover{
+    color:gray;
+    text-decoration: none;
 }
 
 .article-info{
