@@ -181,9 +181,6 @@ async def get_visiter_article_set(articles):
         # 先检查所在的分类，是什么权限
         category = await Category.find(article.belong_category)
         if category is not None:
-            print("检查:" + str(category.scope) + "  " + str(category.title))
-
-        if category is not None:
             if category.scope == 1 and article.scope == 1:
                 new_articles.append(article)
         else:
@@ -263,7 +260,7 @@ async def edit_article(request, *, id):
     categories = await Category.findAll()
 
     return {
-        '__template__':'edit.html',
+        '__template__':'neworedit.html',
         'categories':categories,
         'id':id,
         'article':article,
@@ -281,7 +278,7 @@ async def new_article(request):
     categories = await Category.findAll()
 
     return{
-        '__template__':'edit.html',
+        '__template__':'neworedit.html',
         'categories':categories
     }
 
