@@ -7,3 +7,36 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.article-info{
+    font-size:14px;
+    color:#C3C3C3;
+    padding-left:20px;
+}
+
+.article-item-edit{
+    font-size:14px;
+}
+
+.article-item-edit a{
+    color:#C3C3C3;
+}
+
+.article-item-edit a:hover{
+    color:#2C6CDB;
+    text-decoration: none;
+}
+
+.article-item-delete{
+    font-size:14px;
+}
+
+.article-item-delete a{
+    color:#C3C3C3;
+}
+
+.article-item-delete a:hover{
+    color:#2C6CDB;
+    text-decoration: none;
+    cursor: pointer;
+}

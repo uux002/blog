@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="utf-8" />
-    <title>md编辑器后台编辑页</title>
+    <title>{{ article.article_title }}</title>
     <link rel="stylesheet" href="static/website/css/style.css" />
     <link rel="stylesheet" href="static/css/editormd.css" />
     <link rel="stylesheet" href="static/css/blog/article.css"/>
@@ -22,8 +22,21 @@
 <body>
  <div class="markdown-body">
      {% if article %}
-        <div id="doc-content" style=>
+        <div id="doc-content" >
                 <textarea style="display:none;"> {{ article.md_content }}</textarea>
+        </div>
+        <div class="article-info" style="text-align:left" id="article-info" uid="{{ article.id }}">
+                <!--
+                <span>Author: {{ article.author }}</span>
+                <span>最后更新: {{ article.last_update|datetime }}</span>
+                <span>{{ article.category_name }}</span>
+                -->
+                <span>{{ article.category_name }}</span>
+                <span>最后更新: {{ article.last_update|datetime }}</span>
+                {% if __user__ %}
+                    <span class="article-item-edit"><a href="/edit?id={{ article.id }}">编辑</a></span>
+                    <span class="article-item-delete"><a>删除</a></span>
+                {% endif %}
         </div>
     {% endif %}
     <div>
@@ -45,6 +58,34 @@
 
  
  <script type="text/javascript">
+    var jQuery = Zepto; 
+
+
+    window.onload = function() {
+        {% if __user__ %}
+        $(".article-item-delete a").click(function(){
+            var article_id = document.getElementById("article-info").getAttribute("uid");
+            var result = confirm("确认删除文章：" + article_id);
+            if(result == false){
+                return;
+            }
+            $.post('/api/article/delete',{
+                id:article_id,
+            },function(data,r){
+                if(data){
+                    if(data['result'] < 0){
+                        alert("删除失败：" + data['msg']);
+                    }else{
+                        alert("删除成功");
+                        location.assign('/');
+                    }
+                }
+            });
+        });
+        {% endif %}
+    };
+
+
     var testEditor;
     $(function () {
         testEditor = editormd.markdownToHTML("doc-content", {//注意：这里是上面DIV的id
@@ -55,7 +96,11 @@
             flowChart: true, // 默认不解析
             sequenceDiagram: true, // 默认不解析
             
-    });});
+        });
+
+        
+
+    });
  </script>
  
 

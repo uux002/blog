@@ -18,7 +18,9 @@
         <div id="layout">
             <header>
                 <!--<h1 id="hello">心情这么好，写点什么呢？</h1> -->
-                <h1>Title</h1>
+                <div>
+                    <span class="article-back-btn"><a href="/">back</a></span>
+                </div>
             </header>
 
 
@@ -81,8 +83,18 @@
                 </select>
 
                 <select class="uk-select" id="form-article-scope" style="width:100px;">
+                    {% if not article %}
                     <option value="1">公开</option>
                     <option value="0">私人</option>
+                    {% else %}
+                        {% if article.scope == 1 %}
+                            <option value="1" selected="selected">公开</option>
+                            <option value="0">私人</option>
+                        {% else %}
+                            <option value="1">公开</option>
+                            <option value="0" selected="selected">私人</option>
+                        {% endif %}
+                    {% endif %}
                 </select>
                 
 
@@ -230,8 +242,6 @@
 
                 // 文章存草稿
                 $("#to-save-tmp").bind('click',function(){
-                    alert("tmp save");
-
                     var articleObj = document.getElementById("test-editormd");
                     var article_id = articleObj.getAttribute("article-id");
                     article_title = $("#form-article-title").val();
@@ -242,11 +252,6 @@
                     var scope = $("#form-article-scope").val();
                     var html_content = testEditor.getHTML();
                     var md_content = testEditor.getMarkdown();
-
-                    alert(html_content);
-
-                    $("#view-field").html(html_content);
-                    return;
 
                     $.post('/api/article/tmpsave',{
                         id:article_id,

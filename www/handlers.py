@@ -21,7 +21,7 @@ import os
 
 from datetime import datetime
 
-COOKIE_NAME = 'zhenxinhuadamaoxian_01'
+COOKIE_NAME = 'fredshao_blog'
 _COOKIE_KEY = configs.session.secret
 _ARTICLE_AUTHOR = '五分之1蓝'
 
@@ -161,17 +161,52 @@ def get_error():
 # 主页 - 按照最后更新时间，获取博客列表 (权限检查，未登录时只返回公开的博客)
 @get('/')
 async def index(request):
-    articles = await Article.findAll('article_state=?',[1])
+    articles = await Article.findAll('article_state=?',[1],orderBy='last_update desc')
+    print("错误错误错误：" + str(type(articles)))
+    new_articles = articles
+    if request.__user__ is None:
+        new_articles = await get_visiter_article_set(articles)
+        logging.info("========检查数据类型:" + str(type(articles)) + "  " + str(type(new_articles)))
+
     return {
         '__template__':'index.html',
         #'__template__':'edit.html',
-        'articles':articles
+        'articles':new_articles
     }
+
+
+async def get_visiter_article_set(articles):
+    if articles is None:
+        return None
+    new_articles = []
+    for article in articles:
+        print(article.article_title + "  " + str(article.scope))
+        # 先检查所在的分类，是什么权限
+        category = await Category.find(article.belong_category)
+        if category is not None:
+            print("检查:" + str(category.scope) + "  " + str(category.title))
+
+        if category is not None:
+            if category.scope == 1 and article.scope == 1:
+                new_articles.append(article)
+        else:
+            if article.scope == 1:
+                new_articles.append(article)
+
+    return new_articles
+
+
+
 
 # 草稿页 - 返回所有草稿，最好按最后更新排序（权限检查，未登录时直接跳到错误页）
 @get('/drafts')
 async def get_all_draft(request):
     
+    if(request.__user__ is None):
+        return {
+            'status':404
+        }
+
     drafts = await Article.findAll('article_state=?',[0])
     return {
         '__template__':'drafts.html',
@@ -182,10 +217,26 @@ async def get_all_draft(request):
 @get('/article')
 async def get_article(request, *, id):
     article = await Article.find(id)
+
     if article is None:
         return {
             'status':404
         }
+
+    # 检查文章的访问权限
+    if(request.__user__ is None):
+        category = await Category.find(article.belong_category)
+        if category is None:
+            if(article.scope == 0):
+                return {
+                    'status':404
+                }
+        else:
+            if category.scope == 0 or article.scope == 0:
+                return {
+                    'status':404
+                }
+    
     return{
         '__template__':'article.html',
         'article':article
@@ -198,6 +249,12 @@ async def get_article(request, *, id):
 # 文章编辑页
 @get('/edit')
 async def edit_article(request, *, id):
+
+    if(request.__user__ is None):
+        return {
+            'status':404
+        }
+
     article = await Article.find(id)
 
     if article is None:
@@ -217,7 +274,13 @@ async def edit_article(request, *, id):
 
 # 新建文章页
 @get('/new')
-async def new_article():
+async def new_article(request):
+
+    if(request.__user__ is None):
+        return {
+            'status':404
+        }
+
     categories = await Category.findAll()
 
     return{
@@ -279,6 +342,12 @@ async def authenticate(*, email, passwd):
 # API - 图片上传
 @post('/api/imgupload')
 async def img_upload(request):
+
+    if(request.__user__ is None):
+        return {
+            'success':-1,
+        }
+
     reader = await request.multipart()
     img = await reader.next()
 
@@ -307,7 +376,13 @@ async def img_upload(request):
 
 # API - 添加分类
 @post('/api/add_category')
-async def add_category(*, category, scope):
+async def add_category(request, *, category, scope):
+
+    if(request.__user__ is None):
+        return {
+            'result':-1,
+        }
+
     categories = await Category.findAll("title=?",[category])
 
     if len(categories) > 0:
@@ -338,7 +413,13 @@ async def get_all_category():
 
 # 删除分类
 @post('/api/delete_category')
-async def delete_category(*,id):
+async def delete_category(request, *,id):
+
+    if(request.__user__ is None):
+        return {
+            'status':404
+        }
+
     logging.info("删除分类 " + id)
     if not id:
         return {
@@ -362,7 +443,13 @@ async def delete_category(*,id):
 
 # 修改分类
 @post('/api/change_category')
-async def change_category(*,id,scope):
+async def change_category(request, *,id,scope):
+
+    if(request.__user__ is None):
+        return {
+            'status':404
+        }
+
     if not id:
         return{
             'result':-1,
@@ -388,6 +475,12 @@ async def change_category(*,id,scope):
 # API - 注册
 @post('/api/users')
 async def api_register_user(*, nickname, email, password):
+
+    return {
+        'result':-1,
+        'msg':"Go Fuck Yourself!"
+    }
+
     if not nickname or not nickname.strip():
         return{
             'result':-1,
@@ -443,11 +536,6 @@ def api_blogs_by_page(request,*, page='1'):
     blogs = yield from Blog.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
     return dict(page=p, blogs=blogs)
 
-# 获取指定id的博客
-@get('/api/blogs/{id}')
-def api_get_blog(request,*, id):
-    blog = yield from Blog.find(id)
-    return blog
 
 # 获取指定分类的博客
 @get('/api/blogs/category/{id}')
@@ -469,6 +557,12 @@ def api_delete_blog(request, *, id):
 # 文章存草稿
 @post('/api/article/tmpsave')
 async def api_article_tmp_save(request, *, id, title, category_id, scope, md_content, html_content):
+
+    if(request.__user__ is None):
+        return {
+            'result':-1
+        }
+
     if not id:
         return{
             'result':-1
@@ -549,6 +643,10 @@ async def api_article_tmp_save(request, *, id, title, category_id, scope, md_con
 
 @post('/api/article/public')
 async def api_article_public(request, *, id, title, category_id, scope, md_content, html_content):
+
+    if(request.__user__ is None):
+        return { 'result':-1 }
+
     if not id:
         return { 'result':-1 }
     if not title:
@@ -571,7 +669,7 @@ async def api_article_public(request, *, id, title, category_id, scope, md_conte
 
     tmp_article = await Article.find(id)
     if tmp_article is not None:
-        last_update = tmp_article.last_update
+        created_at = tmp_article.created_at
         update = True
         await tmp_article.remove()
     
@@ -587,7 +685,7 @@ async def api_article_public(request, *, id, title, category_id, scope, md_conte
                         scope = scope,
                         md_content = md_content,
                         html_content = html_content,
-                        last_update = last_update)
+                        created_at = created_at)
     else:
         article = Article(id=article_id,
                         author=_ARTICLE_AUTHOR,
@@ -610,6 +708,12 @@ async def api_article_public(request, *, id, title, category_id, scope, md_conte
 
 @post('/api/article/delete')
 async def api_article_delete(request, *, id):
+
+    if(request.__user__ is None):
+        return {
+            'result':-1
+        }
+
     if not id:
         return{
             'result':-1,

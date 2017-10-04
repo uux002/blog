@@ -2,6 +2,15 @@
     padding-top:50px;
 }
 
+#blog-title{
+    padding-left:30px;
+}
+
+#nav-header{
+    padding-left:30px;
+    padding-right:30px;
+}
+
 .nav-header-items span a{
     color:gray;
     margin-right:10px;
@@ -65,13 +74,14 @@
 #info-side{
     width:300px;
     min-width:300px;
-    background-color: #AFEEEE;
+    /*background-color: #AFEEEE;*/
+    padding:10px;
 }
 
 #content-side{
     min-width:600px;
     padding-left:30px;
-    background-color: #F5F5F5;
+    /*background-color: #F5F5F5;*/
 }
 
 
@@ -82,24 +92,52 @@
 }
 
 .article-title{ 
-    font-size:20px;
+    font-size:26px;
 }
 
 .article-title a{
-    color:gray;
+    color:black;
+    font-weight: bold;
 }
 
 .article-title a:hover{
-    color:gray;
+   color:gray;
     text-decoration: none;
 }
 
 .article-info{
     font-size:14px;
+    color:#C3C3C3;
 }
+
 
 .article-read-info{
     font-size:14px;
 }
 
 
+.article-item-edit{
+    font-size:14px;
+}
+
+.article-item-edit a{
+    color:#C3C3C3;
+}
+
+.article-item-edit a:hover{
+    color:#2C6CDB;
+    text-decoration: none;
+}
+
+.article-item-delete{
+    font-size:14px;
+}
+
+.article-item-delete a{
+    color:#C3C3C3;
+}
+
+.article-item-delete a:hover{
+    color:#2C6CDB;
+    text-decoration: none;
+}

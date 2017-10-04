@@ -32,7 +32,10 @@
     <body>
         
         <div class="uk-container" id="index-container">
-            <h3>Simple Travel</h3>
+            <div id="blog-title">
+                <h3>藏宝海湾</h3>
+            </div>
+            
             <!-- Navbar -->
             <div id="nav-header" class="uk-flex">
                 <!-- Nav bar items -->
@@ -40,6 +43,12 @@
                     <span name="nav-blog"><a href="#">Blog</a></span>
                     <span>/</span>
                     <span name="nav-about"><a href="#">About</a></span>
+                    {% if __user__ %}
+                        <span>/</span>
+                        <span><a href="/new">New</a></span>
+                        <span>/</span>
+                        <span><a href="/drafts">Drafts</a></span>
+                    {% endif %}
                 </div>
 
                 <!-- Navbar user info -->
@@ -48,19 +57,22 @@
                         <span><a href='#'>{{ __user__.nickname }}</a></span>
                         <span><a href='/signout'>Sign out</a></span>
                     {% else %}
-                        <span><a href='/signin'>Sign in</a></span>
+                        <!-- <span><a href='/signin'>Sign in</a></span> -->
                     {% endif %}
                 </div>
                 
             </div>
 
             <!-- Content -->
-            <div id="content-field" style="border:1px solid yellow">
+            <div id="content-field">
                 <div class="uk-flex">
+                    
                     <!-- left side -->
+                    <!--
                     <div id="info-side">
                         Width:300 left side
                     </div>
+                    -->
                     <!-- right content side -->
                     <div class="uk-width-expand" id="content-side">
                         {% if articles %}
@@ -70,19 +82,46 @@
                                 <a href="/article?id={{ article.id }}">{{ article.article_title }}</a>
                             </div>
                             <div class="article-info">
+                                <!--
                                 <span>Author: {{ article.author }}</span>
                                 <span>最后更新: {{ article.last_update|datetime }}</span>
                                 <span>{{ article.category_name }}</span>
+                                -->
+                                <span>{{ article.category_name }}</span>
+                                <span>最后更新: {{ article.last_update|datetime }}</span>
+                                {% if __user__ %}
+                                    <span class="article-item-edit"><a href="/edit?id={{ article.id }}">编辑</a></span>
+                                    <span class="article-item-delete"><a>删除</a></span>
+                                {% endif %}
                             </div>
                             <div class="article-read-info">
+                                <!--
                                 <span>阅读人数:588</span>
                                 <span>喜欢</span>
                                 <span>分享</span>
+                                -->
+                                
                             </div>
-                        </div> 
+                        </div>
+                        <hr>
                         {% endfor %}
                         {% endif %}
                     </div>
+
+                    <div id="info-side">
+                        
+                        <div style="text-align:center">
+                            <img src="static/images/logo/logo.png" style="width:256px; height:256px;"/>
+                        </div>
+                        <div style="padding:10%; text-align:center">
+                            <span style="font-weight:bold;font-size:18px; color:#C3C3C3;">ABOUT ME</span>
+                            <br>
+                            <br>
+                            <span>写写代码，听听音乐，想想游戏，做做设计</span>
+                            
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -91,10 +130,30 @@
         <script>
         $(function(){
             select_blog();
-
             $(".nav-header-items span[name='nav-blog']").click(select_blog);
             $(".nav-header-items span[name='nav-about']").click(select_about);
 
+            {% if __user__ %}
+            $(".article-item-delete a").click(function(){
+                var article_id = $(this).parent().parent().parent().attr("uid");
+                var result = confirm("确认删除文章：" + article_id);
+                if(result == false){
+                    return;
+                }
+                $.post('/api/article/delete',{
+                    id:article_id,
+                },function(data,r){
+                    if(data){
+                        if(data['result'] < 0){
+                            alert("删除失败：" + data['msg']);
+                        }else{
+                            alert("删除成功");
+                            location.assign('/');
+                        }
+                    }
+                });
+            });
+            {% endif %}
         });
 
         function unselect_all(){
