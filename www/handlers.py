@@ -162,11 +162,9 @@ def get_error():
 @get('/')
 async def index(request):
     articles = await Article.findAll('article_state=?',[1],orderBy='last_update desc')
-    print("错误错误错误：" + str(type(articles)))
     new_articles = articles
     if request.__user__ is None:
         new_articles = await get_visiter_article_set(articles)
-        logging.info("========检查数据类型:" + str(type(articles)) + "  " + str(type(new_articles)))
 
     return {
         '__template__':'index.html',
@@ -180,7 +178,6 @@ async def get_visiter_article_set(articles):
         return None
     new_articles = []
     for article in articles:
-        print(article.article_title + "  " + str(article.scope))
         # 先检查所在的分类，是什么权限
         category = await Category.find(article.belong_category)
         if category is not None:
