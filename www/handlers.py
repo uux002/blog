@@ -162,14 +162,18 @@ def get_error():
 @get('/')
 async def index(request):
     articles = await Article.findAll('article_state=?',[1],orderBy='last_update desc')
+    categories = await Category.findAll()
     new_articles = articles
     if request.__user__ is None:
         new_articles = await get_visiter_article_set(articles)
+        categories = await get_visiter_category_set(categories)
+    
 
     return {
         '__template__':'index.html',
         #'__template__':'edit.html',
-        'articles':new_articles
+        'articles':new_articles,
+        'categories':categories,
     }
 
 
@@ -181,14 +185,21 @@ async def get_visiter_article_set(articles):
         # 先检查所在的分类，是什么权限
         category = await Category.find(article.belong_category)
         if category is not None:
-            if category.scope == 1 and article.scope == 1:
+            if category.scope == 1 and article.scope == 1 and article.article_state == 1:
                 new_articles.append(article)
         else:
-            if article.scope == 1:
+            if article.scope == 1 and article.article_state == 1:
                 new_articles.append(article)
 
     return new_articles
 
+async def get_visiter_category_set(categories):
+    new_categories = []
+    for category in categories:
+        if category.scope == 1:
+            new_categories.append(category)
+
+    return new_categories
 
 
 
@@ -532,9 +543,36 @@ def api_blogs_by_page(request,*, page='1'):
 
 
 # 获取指定分类的博客
-@get('/api/blogs/category/{id}')
-def api_get_blogs_by_category(request,*, id):
-    pass
+@get('/articles/category')
+async def api_get_blogs_by_category(request,*, id):
+    logging.info("-----$$$$$$$$$$$$$$$$$$$$$$显示分类文章：" + id)
+    category = await Category.find(id)
+    if category is None:
+        return{
+            'status':404
+        }
+
+    articles = await Article.findAll(orderBy='last_update desc')
+
+    public_articles = []
+
+    for article in articles:
+        if article.article_state == 1 and article.belong_category == id:
+            public_articles.append(article)
+
+    categories = await Category.findAll()
+    new_articles = public_articles
+    if request.__user__ is None:
+        new_articles = await get_visiter_article_set(articles)
+        categories = await get_visiter_category_set(categories)
+    
+
+    return {
+        '__template__':'index.html',
+        #'__template__':'edit.html',
+        'articles':new_articles,
+        'categories':categories,
+    }
 
 '''
 #删除指定id博客

@@ -78,7 +78,7 @@
                     <div class="uk-width-expand" id="content-side">
                         {% if articles %}
                         {% for article in articles %}
-                        <div class="article-box" uid="{{ article.id }}">
+                        <div class="article-box" uid="{{ article.id }}" name="{{ article.article_title }}">
                             <div class="article-title">
                                 <a href="/article?id={{ article.id }}">{{ article.article_title }}</a>
                             </div>
@@ -119,7 +119,14 @@
                             <br>
                             <br>
                             <span>写写代码，听听音乐，想想游戏，做做设计</span>
-                            
+                        </div>
+
+                        <div style="padding:10%; text-align:left;">
+                            <!--
+                            {% for category in categories %}
+                                <div class="index-category" uid="{{ category.id }}"><a href="/articles/category?id={{ category.id }}">{{ category.title }}</a></div>
+                            {% endfor %}
+                            -->
                         </div>
                     </div>
 
@@ -137,7 +144,8 @@
             {% if __user__ %}
             $(".article-item-delete a").click(function(){
                 var article_id = $(this).parent().parent().parent().attr("uid");
-                var result = confirm("确认删除文章：" + article_id);
+                var article_title = $(this).parent().parent().parent().attr("name");
+                var result = confirm("确认删除文章：" + article_title);
                 if(result == false){
                     return;
                 }

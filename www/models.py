@@ -33,7 +33,7 @@ class User(Model):
 class Category(Model):
     __table__='category'
     id = StringField(primary_key=True, default=next_id, ddl='varchar(50)')
-    scope = TinyIntField()
+    scope = TinyIntField()      # 0 私人  1 公开
     title = StringField(ddl='varchar(50)')
     created_at = FloatField(default=time.time)
 
@@ -45,8 +45,8 @@ class Article(Model):
     belong_category = StringField(ddl='varchar(50)')
     category_name = StringField(ddl='varchar(50)')
     article_title = StringField(ddl='varchar(100)')
-    article_state = TinyIntField()
-    scope = TinyIntField()
+    article_state = TinyIntField()      # 0 草稿  1 已发布
+    scope = TinyIntField()      # 0 私人  1 公开
     md_content = MediumTextField()
     html_content = MediumTextField()
     last_update = FloatField(default=time.time)
