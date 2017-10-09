@@ -480,12 +480,12 @@ async def change_category(request, *,id,scope):
 # API - 注册
 @post('/api/users')
 async def api_register_user(*, nickname, email, password):
-    '''
+    
     return {
         'result':-1,
         'msg':"Go Fuck Yourself!"
     }
-    '''
+    
 
     if not nickname or not nickname.strip():
         return{
